@@ -1,0 +1,6 @@
+[submodule "devcontainer-features"]
+	path = devcontainer-features
+	url = https://github.com/ridhwaans/devcontainer-features.git
+[submodule "dotfiles"]
+	path = dotfiles
+	url = https://github.com/ridhwaans/dotfiles.git
