@@ -13,9 +13,9 @@ ARG DISTRIBUTION=debian
 
 ARG RELEASE=stable
 
-FROM $DISTRIBUTION:$RELEASE 
+FROM $DISTRIBUTION:$RELEASE
 
-# Required when running sudo commands for the first time
+# Required for first time sudo commands
 RUN apt-get update && apt-get install -y sudo
 
 EOF
@@ -48,8 +48,6 @@ install_to_container() {
     else
         docker run -d --name "$CONTAINER_NAME" "$IMAGE_NAME" tail -f /dev/null
     fi
-
-    sleep 2
 
     # Recreate the destination folder
     # docker exec -d option is not applicable for running background processes like rm -rf
