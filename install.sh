@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -18,11 +18,20 @@ DEVELOPMENT_LOG_FILE="${DEVELOPMENT_LOG_FILE:-"log/development.log"}"
 source $(dirname $0)/install-to-container.sh
 source $(dirname $0)/install-to-codespaces.sh
 
+# Create the log directory if it doesn't exist
+mkdir -p "$(dirname "$DEVELOPMENT_LOG_FILE")"
+chmod 777 "$(dirname "$DEVELOPMENT_LOG_FILE")"
+
+# Check if the log file exists; if not, create an empty file
+if [ ! -e "$DEVELOPMENT_LOG_FILE" ]; then
+    touch "$DEVELOPMENT_LOG_FILE"
+    chmod 777 "$DEVELOPMENT_LOG_FILE"
+fi
+
 install_to_local() {
-    cd src/base && ./install.sh
+    cd devcontainer-features/src/base && ./install.sh
 }
 
-# Function to display the Docker installation menu
 docker_installation_menu() {
     containers=$(docker ps -a --format '{{.Names}}')
     if [ "$containers" ]; then
@@ -40,25 +49,15 @@ docker_installation_menu() {
     echo ""
     echo "Select Docker installation type:"
     echo "1. Install into Docker container"
-    echo "2. Go back to previous menu"
+    echo "2. Remove container by name (local)"
+    echo "3. Go back to previous menu"
 }
-
-
-# Create the log directory if it doesn't exist
-mkdir -p "$(dirname "$DEVELOPMENT_LOG_FILE")"
-chmod 777 "$(dirname "$DEVELOPMENT_LOG_FILE")"
-
-# Check if the log file exists; if not, create an empty file
-if [ ! -e "$DEVELOPMENT_LOG_FILE" ]; then
-    touch "$DEVELOPMENT_LOG_FILE"
-    chmod 777 "$DEVELOPMENT_LOG_FILE"
-fi
 
 # Ask the user for installation type
 echo "Select installation type:"
-echo "1. Install to local (dockerless)"
-echo "2. Install to docker (local)"
-echo "3. Install to codespaces"
+echo "1. Local (dockerless)"
+echo "2. Docker (local)"
+echo "3. Codespaces"
 read -p "Enter your choice (1, 2, or 3): " choice
 
 # Check the user's choice and proceed accordingly
@@ -71,7 +70,7 @@ case $choice in
         echo "Installing to docker (local)..."
         while true; do
             docker_installation_menu
-            read -p "Enter your choice (1 or 2): " docker_choice
+            read -p "Enter your choice (1, 2 or 3): " docker_choice
             case $docker_choice in
                 1)
                     read -p "Enter the name for the Docker container: " container_name
@@ -80,10 +79,15 @@ case $choice in
                     break
                     ;;
                 2)
+                    read -p "Enter the name of the container to remove: " container_name
+                    CONTAINER_NAME="$container_name"
+                    cleanup_container
+                    ;;
+                3)
                     break  # Go back to previous menu
                     ;;
                 *)
-                    echo "Invalid choice. Please enter 1 or 2."
+                    echo "Invalid choice. Please enter 1, 2, or 3."
                     ;;
             esac
         done

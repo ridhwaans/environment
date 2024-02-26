@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -65,10 +65,15 @@ install_to_container() {
 
     # Run install.sh
     docker exec -it "$CONTAINER_NAME" /bin/bash -c "cd \"$WORKING_DIR\" && sudo ./install.sh"
+
+    docker exec -it "$CONTAINER_NAME" /bin/bash -c "echo 'Install completed. To connect as the user in docker, run:  \"docker exec -u $USERNAME -it $CONTAINER_NAME grep \"^$USERNAME:\" /etc/passwd | cut -d: -f7\"'"
+
 }
 
 cleanup_container() {
-    # Find and remove the container and image
+    # Find and remove the container and associated image
+    IMAGE_NAME=$(docker inspect --format='{{.Config.Image}}' "$CONTAINER_NAME" 2>/dev/null)
+
     if docker ps -a --format '{{.Names}}' | grep -q "$CONTAINER_NAME"; then
         echo "Stopping and removing container: $CONTAINER_NAME"
         docker stop "$CONTAINER_NAME" && docker rm "$CONTAINER_NAME"
