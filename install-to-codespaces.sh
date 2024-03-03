@@ -16,7 +16,7 @@ install_to_codespaces() {
 
     # Check if a URL is provided
     if [ $# -ne 1 ]; then
-        echo "Usage: install_to_codespaces <decontainer_feature_url>"
+        echo "Usage: install_to_codespaces <devcontainer_feature_url>"
         exit 1
     fi
 

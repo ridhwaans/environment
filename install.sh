@@ -29,7 +29,7 @@ if [ ! -e "$DEVELOPMENT_LOG_FILE" ]; then
 fi
 
 install_to_local() {
-    cd devcontainer-features/src/base && ./install.sh
+    cd $CLIENT_DIR && ./install.sh
 }
 
 docker_installation_menu() {
