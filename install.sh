@@ -7,32 +7,72 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+readonly DOTFILES_PATH="dotfiles"
+readonly BASE_ENV_PATH="devcontainer-features/src/base"
+SOURCE="${SOURCE:-""}"
+SOURCE_ADDITIONAL="${SOURCE_ADDITIONAL:-""}"
+
 DISTRIBUTION="${DISTRIBUTION:-"debian"}"
 RELEASE="${RELEASE:-"stable"}"
 IMAGE_NAME="${IMAGE_NAME:-"base"}"
 CONTAINER_NAME="${CONTAINER_NAME:-"instance"}"
-CLIENT_DIR="${CLIENT_DIR:-"devcontainer-features/src/base"}"
-WORKING_DIR="${WORKING_DIR:-"/usr/local/bin/bootstrap"}"
+
 DEVELOPMENT_LOG_FILE="${DEVELOPMENT_LOG_FILE:-"log/development.log"}"
 
-source $(dirname $0)/install-to-container.sh
-source $(dirname $0)/install-to-codespaces.sh
+source $(dirname $0)/_helpers/install-to-local.sh
+source $(dirname $0)/_helpers/install-to-container.sh
+source $(dirname $0)/_helpers/install-to-codespaces.sh
 
 # Create the log directory if it doesn't exist
 mkdir -p "$(dirname "$DEVELOPMENT_LOG_FILE")"
 chmod 777 "$(dirname "$DEVELOPMENT_LOG_FILE")"
 
-# Check if the log file exists; if not, create an empty file
-if [ ! -e "$DEVELOPMENT_LOG_FILE" ]; then
-    touch "$DEVELOPMENT_LOG_FILE"
-    chmod 777 "$DEVELOPMENT_LOG_FILE"
+# Clear the log file if it exists; if not, create an empty file
+if [ -e "$DEVELOPMENT_LOG_FILE" ]; then
+   > "$DEVELOPMENT_LOG_FILE"
+else
+  touch "$DEVELOPMENT_LOG_FILE"
+  chmod 777 "$DEVELOPMENT_LOG_FILE"
 fi
 
-install_to_local() {
-    cd $CLIENT_DIR && ./install.sh
+install_what_menu(){
+  echo "Select what to install:"
+  echo "1) Install environment only"
+  echo "2) Install dotfiles only"
+  echo "3) Install both"
 }
 
-docker_installation_menu() {
+install_what(){
+  while true; do
+  install_what_menu
+  read -p "Enter your choice (1, 2, or 3): " choice
+
+  case $choice in
+      1)
+          SOURCE=$BASE_ENV_PATH
+          install_where
+          break
+          ;;
+      2)
+          SOURCE=$DOTFILES_PATH
+          install_where
+          break
+          ;;
+      3)
+          SOURCE=$BASE_ENV_PATH
+          SOURCE_ADDITIONAL="$DOTFILES_PATH"
+          install_where
+          break
+          ;;
+      *)
+          echo "Invalid choice. Try again."
+          ;;
+  esac
+  done
+}
+
+
+docker_install_menu() {
     containers=$(docker ps -a --format '{{.Names}}')
     if [ "$containers" ]; then
         echo "Existing Docker containers:"
@@ -48,57 +88,81 @@ docker_installation_menu() {
 
     echo ""
     echo "Select Docker installation type:"
-    echo "1. Install into Docker container"
-    echo "2. Remove container by name (local)"
+    echo "1. Install into container"
+    echo "2. Remove container by name"
     echo "3. Go back to previous menu"
 }
 
-# Ask the user for installation type
-echo "Select installation type:"
-echo "1. Local (dockerless)"
-echo "2. Docker (local)"
-echo "3. Codespaces"
-read -p "Enter your choice (1, 2, or 3): " choice
-
-# Check the user's choice and proceed accordingly
-case $choice in
+docker_install() {
+  while true; do
+  docker_install_menu
+  read -p "Enter your choice (1, 2 or 3): " docker_choice
+  case $docker_choice in
     1)
-        echo "Installing to local (dockerless)..."
-        install_to_local
+        read -p "Enter the name for the Docker container: " container_name
+        CONTAINER_NAME="$container_name"
+        install_to_container
+        if [ ! -z "${SOURCE_ADDITIONAL}" ]; then
+          OLDIFS=$IFS
+          IFS=","
+              read -a source_additional <<< "$SOURCE_ADDITIONAL"
+              for source in "${source_additional[@]}"; do
+                install_to_container
+              done
+          IFS=$OLDIFS
+        fi
+        break
         ;;
     2)
-        echo "Installing to docker (local)..."
-        while true; do
-            docker_installation_menu
-            read -p "Enter your choice (1, 2 or 3): " docker_choice
-            case $docker_choice in
-                1)
-                    read -p "Enter the name for the Docker container: " container_name
-                    CONTAINER_NAME="$container_name"
-                    install_to_container
-                    break
-                    ;;
-                2)
-                    read -p "Enter the name of the container to remove: " container_name
-                    CONTAINER_NAME="$container_name"
-                    cleanup_container
-                    ;;
-                3)
-                    break  # Go back to previous menu
-                    ;;
-                *)
-                    echo "Invalid choice. Please enter 1, 2, or 3."
-                    ;;
-            esac
-        done
+        read -p "Enter the name of the container to remove: " container_name
+        CONTAINER_NAME="$container_name"
+        cleanup_container
         ;;
     3)
-        echo "Installing to codespaces..."
-        install_to_codespaces
+        break  # Go back to previous menu
         ;;
     *)
         echo "Invalid choice. Try again."
         ;;
-esac
+  esac
+  done
+}
+
+install_where_menu(){
+  echo "Select installation type:"
+  echo "1. Local (dockerless)"
+  echo "2. Docker (local)"
+  echo "3. Codespaces"
+}
+
+install_where(){
+  while true; do
+  install_where_menu
+  read -p "Enter your choice (1, 2, or 3): " choice
+
+  case $choice in
+      1)
+          echo "Installing to local (dockerless)..."
+          install_to_local
+          break
+          ;;
+      2)
+          echo "Installing to docker (local)..."
+          docker_install
+          break
+          ;;
+      3)
+          echo "Installing to codespaces..."
+          install_to_codespaces
+          break
+          ;;
+      *)
+          echo "Invalid choice. Try again."
+          ;;
+  esac
+  done
+}
+
+install_what
 
 echo "Done"

@@ -49,25 +49,33 @@ install_to_container() {
         docker run -d --name "$CONTAINER_NAME" "$IMAGE_NAME" tail -f /dev/null
     fi
 
+    DESTINATION="/usr/local/bin/bootstrap"
+    [[ $SOURCE_ADDITIONAL == $DOTFILES_PATH ]] && DESTINATION="/home/$USERNAME"
+
     # Recreate the destination folder
     # docker exec -d option is not applicable for running background processes like rm -rf
-    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "[ -d \"$WORKING_DIR\" ] && rm -rf \"$WORKING_DIR\""; then
-        echo "Failed to remove directory $WORKING_DIR in container $CONTAINER_NAME" >&2
+    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "[ -d \"$DESTINATION\" ] && rm -rf \"$DESTINATION\""; then
+        echo "Failed to remove directory $DESTINATION in container $CONTAINER_NAME" >&2
     fi
 
-    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "mkdir -p \"$WORKING_DIR\""; then
-        echo "Failed to create directory $WORKING_DIR in container $CONTAINER_NAME" >&2
+    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "mkdir -p \"$DESTINATION\""; then
+        echo "Failed to create directory $DESTINATION in container $CONTAINER_NAME" >&2
     fi
 
     echo "Installing in Docker container: $CONTAINER_NAME..."
     # Copy files and subdirectories from the host to the container
-    docker cp "$CLIENT_DIR/." "$CONTAINER_NAME":"$WORKING_DIR"
+    docker cp "$SOURCE/." "$CONTAINER_NAME":"$DESTINATION"
 
-    # Run install.sh
-    docker exec -it "$CONTAINER_NAME" /bin/bash -c "cd \"$WORKING_DIR\" && sudo ./install.sh"
+    # Run install.sh as sudo
+    docker exec -it "$CONTAINER_NAME" /bin/bash -c "cd \"$DESTINATION\" && sudo ./install.sh"
 
-    docker exec -it "$CONTAINER_NAME" /bin/bash -c "echo 'Install completed. To connect as the user in docker, run:  \"docker exec -u $USERNAME -it $CONTAINER_NAME grep \"^$USERNAME:\" /etc/passwd | cut -d: -f7\"'"
-
+    # Connection instructions
+    docker exec -e DESTINATION="$DESTINATION" -e CONTAINER_NAME="$CONTAINER_NAME" -it "$CONTAINER_NAME" /bin/bash -c '
+      if [[ -f "$DESTINATION/.report" ]]; then
+          source "$DESTINATION/.report"
+          echo "To connect as the user in docker, run: \"docker exec -u $USERNAME -it -w /home/$USERNAME $CONTAINER_NAME $(grep "^$USERNAME:" /etc/passwd | cut -d: -f7)\""
+      fi
+    '
 }
 
 cleanup_container() {

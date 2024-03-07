@@ -38,9 +38,9 @@ install_to_codespaces() {
             # Check if devcontainer.json has the correct URL
             if ! grep -q "$url" .devcontainer/devcontainer.json; then
                 echo "Rewriting devcontainer.json URL"
-                jq ". += {\"decontainerFeatureUrl\": \"$url\"}" .devcontainer/devcontainer.json > tmp_devcontainer.json && mv tmp_devcontainer.json .devcontainer/devcontainer.json
+                jq ". += {\"devcontainerFeatureUrl\": \"$url\"}" .devcontainer/devcontainer.json > tmp_devcontainer.json && mv tmp_devcontainer.json .devcontainer/devcontainer.json
                 git add .devcontainer/devcontainer.json
-                git commit -m "Update devcontainer.json with decontainer feature"
+                git commit -m "Update devcontainer.json with devcontainer feature"
                 git push origin main
             else
                 echo "devcontainer.json already points to the correct URL"
@@ -55,7 +55,7 @@ install_to_codespaces() {
         # Create a new repository
         gh repo create "$repo_owner/$repo_name" --private
 
-        # Create a codespace using the decontainer feature URL
-        gh codespace create --name "$repo_name-codespace" --decontainer-feature-url "$url" "$repo_owner/$repo_name"
+        # Create a codespace using the devcontainer feature URL
+        gh codespace create --name "$repo_name-codespace" --devcontainer-feature-url "$url" "$repo_owner/$repo_name"
     fi
 }
