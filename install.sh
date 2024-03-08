@@ -2,15 +2,9 @@
 
 set -e
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo -e 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
-  exit 1
-fi
-
-readonly DOTFILES_PATH="dotfiles"
-readonly BASE_ENV_PATH="devcontainer-features/src/base"
-SOURCE="${SOURCE:-""}"
-SOURCE_ADDITIONAL="${SOURCE_ADDITIONAL:-""}"
+readonly DOTFILES_SOURCE="dotfiles"
+readonly BASE_ENV_SOURCE="devcontainer-features/src/base"
+SOURCES="${SOURCES:-""}"
 
 DISTRIBUTION="${DISTRIBUTION:-"debian"}"
 RELEASE="${RELEASE:-"stable"}"
@@ -37,37 +31,36 @@ fi
 
 install_what_menu(){
   echo "Select what to install:"
-  echo "1) Install environment only"
+  echo "1) Install base environment only"
   echo "2) Install dotfiles only"
   echo "3) Install both"
 }
 
 install_what(){
   while true; do
-  install_what_menu
-  read -p "Enter your choice (1, 2, or 3): " choice
+    install_what_menu
+    read -p "Enter your choice (1, 2, or 3): " choice
 
-  case $choice in
+    case $choice in
       1)
-          SOURCE=$BASE_ENV_PATH
+          SOURCES=$BASE_ENV_SOURCE
           install_where
           break
           ;;
       2)
-          SOURCE=$DOTFILES_PATH
+          SOURCES=$DOTFILES_SOURCE
           install_where
           break
           ;;
       3)
-          SOURCE=$BASE_ENV_PATH
-          SOURCE_ADDITIONAL="$DOTFILES_PATH"
+          SOURCES="$BASE_ENV_PATH, $DOTFILES_PATH"
           install_where
           break
           ;;
       *)
           echo "Invalid choice. Try again."
           ;;
-  esac
+    esac
   done
 }
 
@@ -101,12 +94,11 @@ docker_install() {
     1)
         read -p "Enter the name for the Docker container: " container_name
         CONTAINER_NAME="$container_name"
-        install_to_container
-        if [ ! -z "${SOURCE_ADDITIONAL}" ]; then
+        if [ ! -z "${SOURCES}" ]; then
           OLDIFS=$IFS
           IFS=","
-              read -a source_additional <<< "$SOURCE_ADDITIONAL"
-              for source in "${source_additional[@]}"; do
+              read -a sources <<< "$SOURCES"
+              for source in "${sources[@]}"; do
                 install_to_container
               done
           IFS=$OLDIFS
@@ -119,7 +111,7 @@ docker_install() {
         cleanup_container
         ;;
     3)
-        break  # Go back to previous menu
+        break # Go back to previous menu
         ;;
     *)
         echo "Invalid choice. Try again."
@@ -164,5 +156,3 @@ install_where(){
 }
 
 install_what
-
-echo "Done"

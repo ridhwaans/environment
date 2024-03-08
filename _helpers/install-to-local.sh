@@ -1,13 +1,10 @@
 install_to_local() {
-  # Run install.sh as sudo
-  cd $SOURCE && sudo ./install.sh
-
-  if [ ! -z "${SOURCE_ADDITIONAL}" ]; then
+  if [ ! -z "${sources}" ]; then
     OLDIFS=$IFS
     IFS=","
-        read -a source_additional <<< "$SOURCE_ADDITIONAL"
-        for source in "${source_additional[@]}"; do
-          cd "${source}" && sudo ./install.sh
+        read -a sources <<< "$SOURCES"
+        for source in "${sources[@]}"; do
+          cd $source && sudo $( [ $source = $DOTFILES_SOURCE ] && echo "-u $USERNAME" ) ./install.sh
         done
     IFS=$OLDIFS
   fi

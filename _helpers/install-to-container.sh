@@ -33,8 +33,16 @@ EOF
 }
 
 install_to_container() {
+  if [ "$#" -ne 2 ]; then
+      echo "Usage: ${FUNCNAME[1]} source destination"
+      exit 1
+  fi
+
+  local source=$1
+  local destination=${2:-"/usr/local/bin/bootstrap"}
+
     # Redirect stdout and stderr of the script to a log file using tee
-    echo "$DEVELOPMENT_LOG_FILE"
+    echo "$(date +'%r %d-%m-%Y') Logging to $DEVELOPMENT_LOG_FILE"
     exec > >(tee -a "$DEVELOPMENT_LOG_FILE") 2>&1
 
     # Check if the container does not exist
@@ -49,30 +57,30 @@ install_to_container() {
         docker run -d --name "$CONTAINER_NAME" "$IMAGE_NAME" tail -f /dev/null
     fi
 
-    DESTINATION="/usr/local/bin/bootstrap"
-    [[ $SOURCE_ADDITIONAL == $DOTFILES_PATH ]] && DESTINATION="/home/$USERNAME"
-
     # Recreate the destination folder
     # docker exec -d option is not applicable for running background processes like rm -rf
-    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "[ -d \"$DESTINATION\" ] && rm -rf \"$DESTINATION\""; then
-        echo "Failed to remove directory $DESTINATION in container $CONTAINER_NAME" >&2
+    echo "Recreating destination directory $destination in Docker container: $CONTAINER_NAME..."
+    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "[ -d \"$destination\" ] && rm -rf \"$destination\""; then
+        echo "Failed to remove directory $destination in container $CONTAINER_NAME" >&2
+        exit 1
     fi
 
-    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "mkdir -p \"$DESTINATION\""; then
-        echo "Failed to create directory $DESTINATION in container $CONTAINER_NAME" >&2
+    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "mkdir -p \"$destination\""; then
+        echo "Failed to create directory $destination in container $CONTAINER_NAME" >&2
+        exit 1
     fi
 
-    echo "Installing in Docker container: $CONTAINER_NAME..."
     # Copy files and subdirectories from the host to the container
-    docker cp "$SOURCE/." "$CONTAINER_NAME":"$DESTINATION"
+    docker cp "$source/." "$CONTAINER_NAME":"$destination"
 
     # Run install.sh as sudo
-    docker exec -it "$CONTAINER_NAME" /bin/bash -c "cd \"$DESTINATION\" && sudo ./install.sh"
+    echo "Installing in Docker container: $CONTAINER_NAME..."
+    docker exec -w "$destination" -it "$CONTAINER_NAME" /bin/bash -c "sudo $( [ $source = $DOTFILES_SOURCE ] && echo "-u $USERNAME" ) ./install.sh"
 
     # Connection instructions
-    docker exec -e DESTINATION="$DESTINATION" -e CONTAINER_NAME="$CONTAINER_NAME" -it "$CONTAINER_NAME" /bin/bash -c '
-      if [[ -f "$DESTINATION/.report" ]]; then
-          source "$DESTINATION/.report"
+    docker exec -w "$destination" -e CONTAINER_NAME="$CONTAINER_NAME" -it "$CONTAINER_NAME" /bin/bash -c '
+      if [[ -f ".report" ]]; then
+          source ".report"
           echo "To connect as the user in docker, run: \"docker exec -u $USERNAME -it -w /home/$USERNAME $CONTAINER_NAME $(grep "^$USERNAME:" /etc/passwd | cut -d: -f7)\""
       fi
     '
