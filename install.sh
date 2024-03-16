@@ -99,7 +99,7 @@ docker_install() {
           IFS=","
               read -a sources <<< "$SOURCES"
               for source in "${sources[@]}"; do
-                install_to_container
+                install_to_container $source
               done
           IFS=$OLDIFS
         fi

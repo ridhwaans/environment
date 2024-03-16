@@ -33,11 +33,6 @@ EOF
 }
 
 install_to_container() {
-  if [ "$#" -ne 2 ]; then
-      echo "Usage: ${FUNCNAME[1]} source destination"
-      exit 1
-  fi
-
   local source=$1
   local destination=${2:-"/usr/local/bin/bootstrap"}
 
@@ -45,30 +40,41 @@ install_to_container() {
     echo "$(date +'%r %d-%m-%Y') Logging to $DEVELOPMENT_LOG_FILE"
     exec > >(tee -a "$DEVELOPMENT_LOG_FILE") 2>&1
 
-    # Check if the container does not exist
-    if ! docker ps --format '{{.Names}}' | grep -q "$CONTAINER_NAME"; then
+    # Build the image if it does not exist locally
+    if ! docker image inspect "$IMAGE_NAME" 2>/dev/null; then
+        echo "Image '$IMAGE_NAME' does not exist locally."
         build_image
     fi
 
-    # Start the container if it is not running
-    if [ "$(docker inspect -f '{{.State.Running}}' $CONTAINER_NAME 2>/dev/null)" = "true" ]; then
-        echo "Container is already running: $CONTAINER_NAME"
+    # Check if the container with the specified name exists
+    if docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}" | grep -q "$CONTAINER_NAME"; then
+        # Get the image name associated with the container
+        CONTAINER_IMAGE=$(docker inspect -f '{{.Config.Image}}' "$CONTAINER_NAME")
+
+        # Check if the image name matches the specified image name
+        if [ "$CONTAINER_IMAGE" = "$IMAGE_NAME" ]; then
+            echo "Container with name '$CONTAINER_NAME' and image '$IMAGE_NAME' exists."
+             # Start the container if it is not running
+            if [ "$(docker inspect -f '{{.State.Running}}' $CONTAINER_NAME 2>/dev/null)" = "true" ]; then
+                echo "Container is already running: $CONTAINER_NAME"
+            else
+                docker start -d "$CONTAINER_NAME"
+            fi
+        else
+            echo "Container with name '$CONTAINER_NAME' exists, but it is using a different image: $CONTAINER_IMAGE"
+        fi
     else
+        # Create and start the container if it does not exist
+        echo "Container with name '$CONTAINER_NAME' does not exist."
         docker run -d --name "$CONTAINER_NAME" "$IMAGE_NAME" tail -f /dev/null
     fi
 
-    # Recreate the destination folder
+    docker exec "$CONTAINER_NAME" /bin/bash -c "[ -d $destination ]" && {
+    # If exit status is 0 (directory exists), recreate the destination directory
+    # If exit status is 1, just continue the script
     # docker exec -d option is not applicable for running background processes like rm -rf
-    echo "Recreating destination directory $destination in Docker container: $CONTAINER_NAME..."
-    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "[ -d \"$destination\" ] && rm -rf \"$destination\""; then
-        echo "Failed to remove directory $destination in container $CONTAINER_NAME" >&2
-        exit 1
-    fi
-
-    if ! docker exec "$CONTAINER_NAME" /bin/bash -c "mkdir -p \"$destination\""; then
-        echo "Failed to create directory $destination in container $CONTAINER_NAME" >&2
-        exit 1
-    fi
+    docker exec "$CONTAINER_NAME" /bin/bash -c "rm -rf $destination && mkdir -p $destination"
+    } || true
 
     # Copy files and subdirectories from the host to the container
     docker cp "$source/." "$CONTAINER_NAME":"$destination"
