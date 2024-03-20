@@ -94,19 +94,18 @@ install_to_container() {
 
 cleanup_container() {
     # Find and remove the container and associated image
-    IMAGE_NAME=$(docker inspect --format='{{.Config.Image}}' "$CONTAINER_NAME" 2>/dev/null)
-
     if docker ps -a --format '{{.Names}}' | grep -q "$CONTAINER_NAME"; then
         echo "Stopping and removing container: $CONTAINER_NAME"
-        docker stop "$CONTAINER_NAME" && docker rm "$CONTAINER_NAME"
+        docker stop "$CONTAINER_NAME" >/dev/null 2>&1 && docker rm "$CONTAINER_NAME" >/dev/null 2>&1
     else
         echo "Container $CONTAINER_NAME not found."
     fi
 
-    if docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "$IMAGE_NAME"; then
-        echo "Removing image: $IMAGE_NAME"
-        docker rmi "$IMAGE_NAME"
+    CONTAINER_IMAGE_NAME=$(docker inspect --format='{{.Config.Image}}' "$CONTAINER_NAME" 2>/dev/null) || true
+    if docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "$CONTAINER_IMAGE_NAME"; then
+        echo "Removing image: $CONTAINER_IMAGE_NAME"
+        docker rmi "$CONTAINER_IMAGE_NAME" >/dev/null 2>&1
     else
-        echo "Image $IMAGE_NAME not found."
+        echo "Image $CONTAINER_IMAGE_NAME not found."
     fi
 }
