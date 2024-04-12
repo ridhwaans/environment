@@ -2,16 +2,14 @@
 
 set -e
 
-readonly DOTFILES_SOURCE="dotfiles"
-readonly BASE_ENV_SOURCE="devcontainer-features/src/base"
-SOURCES="${SOURCES:-""}"
+DEVELOPMENT_LOG_FILE="${DEVELOPMENT_LOG_FILE:-"log/development.log"}"
 
-DISTRIBUTION="${DISTRIBUTION:-"debian"}"
-RELEASE="${RELEASE:-"stable"}"
 IMAGE_NAME="${IMAGE_NAME:-"base"}"
 CONTAINER_NAME="${CONTAINER_NAME:-"instance"}"
 
-DEVELOPMENT_LOG_FILE="${DEVELOPMENT_LOG_FILE:-"log/development.log"}"
+readonly DOTFILES_SOURCE="dotfiles"
+readonly BASE_FEATURE_SOURCE="devcontainer-features/src/base"
+SOURCES="${SOURCES:-""}"
 
 source $(dirname $0)/_helpers/install-to-local.sh
 source $(dirname $0)/_helpers/install-to-container.sh
@@ -31,7 +29,7 @@ fi
 
 install_what_menu(){
   echo "Select what to install:"
-  echo "1) Install base environment only"
+  echo "1) Install base feature only"
   echo "2) Install dotfiles only"
   echo "3) Install both"
 }
@@ -43,7 +41,7 @@ install_what(){
 
     case $choice in
       1)
-          SOURCES=$BASE_ENV_SOURCE
+          SOURCES=$BASE_FEATURE_SOURCE
           install_where
           break
           ;;
@@ -123,7 +121,7 @@ docker_install() {
 install_where_menu(){
   echo "Select installation type:"
   echo "1. Local (dockerless)"
-  echo "2. Docker (local)"
+  echo "2. Local (dockerized)"
   echo "3. Codespaces"
 }
 
@@ -139,7 +137,7 @@ install_where(){
           break
           ;;
       2)
-          echo "Installing to docker (local)..."
+          echo "Installing to local (dockerized)..."
           docker_install
           break
           ;;

@@ -8,7 +8,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 build_image() {
-    DOCKERFILE_CONTENT=$(cat <<'EOF'
+    DOCKERFILE_DEBIAN=$(cat <<'EOF'
 ARG DISTRIBUTION=debian
 
 ARG RELEASE=stable
@@ -28,11 +28,17 @@ EOF
         docker build --no-cache -t "$IMAGE_NAME" .
     else
         # Use the inline Dockerfile content
-        echo "$DOCKERFILE_CONTENT" | docker build --no-cache -t "$IMAGE_NAME" -
+        echo "$DOCKERFILE_DEBIAN" | docker build --no-cache -t "$IMAGE_NAME" -
     fi
 }
 
 install_to_container() {
+  # Check if source is provided
+  if [ $# -lt 1 ]; then
+      echo "Usage: install_to_container <source> [<destination> (optional)]"
+      exit 1
+  fi
+
   local source=$1
   local destination=${2:-"/usr/local/bin/bootstrap"}
 
@@ -54,17 +60,17 @@ install_to_container() {
         # Check if the image name matches the specified image name
         if [ "$CONTAINER_IMAGE" = "$IMAGE_NAME" ]; then
             echo "Container with name '$CONTAINER_NAME' and image '$IMAGE_NAME' exists."
-             # Start the container if it is not running
+             # Start the container in detached mode if it is not running
             if [ "$(docker inspect -f '{{.State.Running}}' $CONTAINER_NAME 2>/dev/null)" = "true" ]; then
                 echo "Container is already running: $CONTAINER_NAME"
             else
-                docker start -d "$CONTAINER_NAME"
+                docker start "$CONTAINER_NAME"
             fi
         else
             echo "Container with name '$CONTAINER_NAME' exists, but it is using a different image: $CONTAINER_IMAGE"
         fi
     else
-        # Create and start the container if it does not exist
+        # Create and start the container in detached mode if it does not exist
         echo "Container with name '$CONTAINER_NAME' does not exist."
         docker run -d --name "$CONTAINER_NAME" "$IMAGE_NAME" tail -f /dev/null
     fi
