@@ -8,7 +8,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 build_image() {
-    DOCKERFILE_DEBIAN=$(cat <<'EOF'
+    DOCKERFILE_DEBIAN_STABLE=$(cat <<'EOF'
 ARG DISTRIBUTION=debian
 
 ARG RELEASE=stable
@@ -28,7 +28,7 @@ EOF
         docker build --no-cache -t "$IMAGE_NAME" .
     else
         # Use the inline Dockerfile content
-        echo "$DOCKERFILE_DEBIAN" | docker build --no-cache -t "$IMAGE_NAME" -
+        echo "$DOCKERFILE_DEBIAN_STABLE" | docker build --no-cache -t "$IMAGE_NAME" -
     fi
 }
 
@@ -55,10 +55,10 @@ install_to_container() {
     # Check if the container with the specified name exists
     if docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}" | grep -q "$CONTAINER_NAME"; then
         # Get the image name associated with the container
-        CONTAINER_IMAGE=$(docker inspect -f '{{.Config.Image}}' "$CONTAINER_NAME")
+        CONTAINER_IMAGE_NAME=$(docker inspect -f '{{.Config.Image}}' "$CONTAINER_NAME")
 
         # Check if the image name matches the specified image name
-        if [ "$CONTAINER_IMAGE" = "$IMAGE_NAME" ]; then
+        if [ "$CONTAINER_IMAGE_NAME" = "$IMAGE_NAME" ]; then
             echo "Container with name '$CONTAINER_NAME' and image '$IMAGE_NAME' exists."
              # Start the container in detached mode if it is not running
             if [ "$(docker inspect -f '{{.State.Running}}' $CONTAINER_NAME 2>/dev/null)" = "true" ]; then
@@ -93,7 +93,7 @@ install_to_container() {
     docker exec -w "$destination" -e CONTAINER_NAME="$CONTAINER_NAME" -it "$CONTAINER_NAME" /bin/bash -c '
       if [[ -f ".report" ]]; then
           source ".report"
-          echo "To connect as the user in docker, run: \"docker exec -u $USERNAME -it -w /home/$USERNAME $CONTAINER_NAME $(grep "^$USERNAME:" /etc/passwd | cut -d: -f7)\""
+          echo "To connect as this user in docker, run: \"docker exec -u $USERNAME -it -w /home/$USERNAME $CONTAINER_NAME $(grep "^$USERNAME:" /etc/passwd | cut -d: -f7)\""
       fi
     '
 }
