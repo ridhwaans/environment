@@ -7,6 +7,13 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+run_docker_command_as_target_user() {
+    # workaround for issue running docker as root
+    USERNAME="${SUDO_USER}"
+    sudo chown -R $USERNAME: /Users/$USERNAME/.docker
+    sudo -u $USERNAME docker "$@"
+}
+
 build_image() {
     DOCKERFILE_DEBIAN_STABLE=$(cat <<'EOF'
 ARG DISTRIBUTION=debian
@@ -25,10 +32,10 @@ EOF
     # Check if Dockerfile exists in the current directory
     if [ -f Dockerfile ]; then
         # Use the Dockerfile in the current directory
-        docker build --no-cache -t "$IMAGE_NAME" .
+        run_docker_command_as_target_user build --no-cache -t "$IMAGE_NAME" .
     else
         # Use the inline Dockerfile content
-        echo "$DOCKERFILE_DEBIAN_STABLE" | docker build --no-cache -t "$IMAGE_NAME" -
+        echo "$DOCKERFILE_DEBIAN_STABLE" | run_docker_command_as_target_user build --no-cache -t "$IMAGE_NAME" -
     fi
 }
 
@@ -87,7 +94,7 @@ install_to_container() {
 
     # Run install.sh as sudo
     echo "Installing in Docker container: $CONTAINER_NAME..."
-    docker exec -w "$destination" -it "$CONTAINER_NAME" /bin/bash -c "sudo $( [ $source = $DOTFILES_SOURCE ] && echo "-u $USERNAME" ) ./install.sh"
+    run_docker_command_as_target_user exec -w "$destination" -it "$CONTAINER_NAME" /bin/bash -c "sudo $( [ $source = $DOTFILES_SOURCE ] && echo "-u $USERNAME" ) ./install.sh"
 
     # Connection instructions
     docker exec -w "$destination" -e CONTAINER_NAME="$CONTAINER_NAME" -it "$CONTAINER_NAME" /bin/bash -c '
