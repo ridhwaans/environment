@@ -10,7 +10,7 @@ fi
 run_docker_command_as_target_user() {
     # workaround for issue running docker as root
     USERNAME="${SUDO_USER}"
-    sudo chown -R $USERNAME: /Users/$USERNAME/.docker
+    sudo chown -R $USERNAME: ~/.docker # /Users/$USERNAME/.docker or ~/.docker
     sudo -u $USERNAME docker "$@"
 }
 
