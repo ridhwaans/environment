@@ -13,6 +13,7 @@ install_to_local() {
     IFS=","
         read -a sources <<< "$SOURCES"
         for source in "${sources[@]}"; do
+          echo "source: $source"
           # For dotfiles, username is the original user who invoked sudo, not the username of the root user
           cd $source && sudo $( [ $source = $DOTFILES_SOURCE ] && echo "-u $USERNAME" ) ./install.sh
         done

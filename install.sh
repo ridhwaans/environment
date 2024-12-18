@@ -11,6 +11,7 @@ readonly DOTFILES_SOURCE="dotfiles"
 readonly BASE_FEATURE_SOURCE="devcontainer-features/src/base"
 SOURCES="${SOURCES:-""}"
 
+# load helper functions
 source $(dirname $0)/_helpers/install-to-local.sh
 source $(dirname $0)/_helpers/install-to-container.sh
 source $(dirname $0)/_helpers/install-to-codespaces.sh
@@ -90,8 +91,9 @@ docker_install() {
   read -p "Enter your choice (1, 2 or 3): " docker_choice
   case $docker_choice in
     1)
-        read -p "Enter the name for the Docker container: " container_name
-        CONTAINER_NAME="$container_name"
+        random_name=$(curl -s https://frightanic.com/goodies_content/docker-names.php)
+        read -p "Enter the name for the Docker container [${random_name}]: " container_name
+        CONTAINER_NAME="${container_name:-$random_name}"
         if [ ! -z "${SOURCES}" ]; then
           OLDIFS=$IFS
           IFS=","

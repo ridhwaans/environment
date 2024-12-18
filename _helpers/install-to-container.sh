@@ -100,7 +100,7 @@ install_to_container() {
     docker exec -w "$destination" -e CONTAINER_NAME="$CONTAINER_NAME" -it "$CONTAINER_NAME" /bin/bash -c '
       if [[ -f ".report" ]]; then
           source ".report"
-          echo "To connect as this user in docker, run: \"docker exec -u $USERNAME -it -w /home/$USERNAME $CONTAINER_NAME $(grep "^$USERNAME:" /etc/passwd | cut -d: -f7)\""
+          echo "To connect as this user in docker, run: \"docker exec -u $TARGET_USERNAME -it -w /home/$TARGET_USERNAME $CONTAINER_NAME $(grep "^$TARGET_USERNAME:" /etc/passwd | cut -d: -f7)\""
       fi
     '
 }
