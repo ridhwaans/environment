@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Display help for the main script
+function show_help() {
+  echo "Usage: $0 [COMMAND] [OPTIONS]"
+  echo "Commands:"
+  echo "  install              Install the application"
+  echo "  font                 Font management (use 'font help' for details)"
+  echo "  theme                Theme management (use 'theme help' for details)"
+  echo "  help                 Show this help message"
+}
+
+# Main script logic
+if [[ "$#" -lt 1 ]]; then
+  show_help
+  exit 1
+fi
+
+command="$1"
+shift
+
+case "$command" in
+  install)
+    echo "Installing the application..."
+    ;;
+  font)
+    ./font.sh "$@"
+    ;;
+  theme)
+    ./theme.sh "$@"
+    ;;
+  help)
+    show_help
+    ;;
+  *)
+    echo "Error: Unknown command '$command'."
+    show_help
+    exit 1
+    ;;
+esac

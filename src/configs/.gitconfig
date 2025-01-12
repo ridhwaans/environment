@@ -1,0 +1,26 @@
+# See https://git-scm.com/docs/git-config for more
+
+[user]
+    name = Rid Shakeel
+    email = shakeel.ridhwaan@gmail.com
+[init]
+	defaultBranch = main
+[push]
+    default = simple
+[alias]
+    ec = config --global -e
+    up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+    cm = !git add -A && git commit -m
+    save = !git add -A && git commit -m "SAVEPOINT"
+    wip = commit -am "WIP"
+    undo = reset HEAD~1 --mixed
+    undo2 = reset --soft HEAD^
+    find = log --color --source -S
+    amend = commit -a --amend --reuse-message=HEAD --no-verify
+    contrib = shortlog --summary --numbered
+    show-ls = !git rev-parse HEAD | xargs git diff-tree --no-commit-id --name-only -r
+    refresh-ignore = "!f() { git rm -r --cached . && git add . && git commit -am \"Refresh .gitignore\"; }; f"
+    pr = "!f() { REMOTE=$(git remote); PR_BRANCH=$(git ls-remote --exit-code --heads $REMOTE refs/pull/$1/head | cut -f2); git fetch $REMOTE pull/$1/head:$PR_BRANCH; git checkout $PR_BRANCH; }; f"
+    default-branch = "!f() { git remote show origin | grep 'HEAD branch' | cut -d ':' -f 2 | xargs; }; f"
+[url "git@github.com:"]
+    pushInsteadOf = https://github.com/
