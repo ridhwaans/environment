@@ -23,8 +23,8 @@ elif [ $(uname) = Linux ]; then
     WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
     WINDOWS_TERMINAL_SETTINGS_DIR=$WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState
 
-    jq --argjson terminal "$(cat "$SCRIPT_HOME/$THEME/terminal.json")" \
-   '.schemes = [ $terminal ]' \
+    jq --argjson theme "$(cat "$SCRIPT_HOME/$THEME/terminal.json")" \
+   '.schemes = [ $theme ]' \
    "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json \
    > temp.json && mv temp.json "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json
 

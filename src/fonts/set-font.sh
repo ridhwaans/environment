@@ -72,10 +72,25 @@ set_font() {
     gsed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$base_name\"/g" "$VSCODE_SETTINGS_DIR"/settings.json
   fi
 
+  # Windows Terminal
+  if [ $(uname) = Linux ]; then
+    if [ -n "$WSL_DISTRO_NAME" ]; then
+      echo "(wsl)"
+
+      WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
+      WINDOWS_TERMINAL_SETTINGS_DIR=$WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState
+
+      jq --arg base_name "$base_name" '.profiles.list |= map(if .source == "Windows.Terminal.Wsl" then .font.face = $base_name else . end)' \
+      "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json \
+      > temp.json && mv temp.json "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json
+    fi
+  fi
+
+  # Terminal.app
   if [ $(uname) = Darwin ]; then
     echo "(mac)"
 
-# Terminal.app
+
 FONT_NAME="RobotoMonoForPowerline-Regular"
 FONT_SIZE="11"
 
