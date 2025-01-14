@@ -28,3 +28,6 @@ fi
 source $(dirname $0)/modules/_config.sh
 # load helper functions
 source $(dirname $0)/modules/_helper.sh
+
+rm -rf ~/.local/share/omakub
+git clone https://github.com/ridhwaans/environment.git ~/.local/share/environment
