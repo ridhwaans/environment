@@ -7,7 +7,9 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 echo "For user ${USERNAME}"
 
 # Run commands as the target user non-interactively
-sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" bash <<'EOF'
+sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" bash -l <<'EOF'
+
+USER_HOME=$(getent passwd "$USERNAME" | cut -d: -f6)
 
 echo "(1/3) Setting up IDE..."
 if command -v code &>/dev/null; then
