@@ -64,7 +64,7 @@ fi
 if [ "${RUBY_VERSION}" != "" ]; then
     # Find version using soft match
     find_version_from_git_tags RUBY_VERSION "https://github.com/ruby/ruby" "tags/v" "_"
-    su ${USERNAME} -c "export RBENV_ROOT=${RBENV_ROOT}; export PATH=$RBENV_ROOT/bin:\$PATH; rbenv install ${RUBY_VERSION} && rbenv global ${RUBY_VERSION}"
+    su ${USERNAME} -c "export RBENV_ROOT=${RBENV_ROOT}; export PATH=$RBENV_ROOT/bin:\$PATH; rbenv install --skip-existing ${RUBY_VERSION} && rbenv global ${RUBY_VERSION}"
 fi
 
 # Additional ruby versions to be installed but not be set as default.
@@ -73,7 +73,7 @@ if [ ! -z "${ADDITIONAL_VERSIONS}" ]; then
     IFS=","
         read -a additional_versions <<< "$ADDITIONAL_VERSIONS"
         for version in "${additional_versions[@]}"; do
-            su ${USERNAME} -c "export RBENV_ROOT=${RBENV_ROOT}; export PATH=$RBENV_ROOT/bin:\$PATH; rbenv install ${version}"
+            su ${USERNAME} -c "export RBENV_ROOT=${RBENV_ROOT}; export PATH=$RBENV_ROOT/bin:\$PATH; rbenv install --skip-existing ${version}"
         done
     IFS=$OLDIFS
 fi

@@ -62,7 +62,7 @@ fi
 if [ "${PYTHON_VERSION}" != "" ]; then
      # Find version using soft match
     find_version_from_git_tags PYTHON_VERSION "https://github.com/python/cpython"
-    su ${USERNAME} -c "export PYENV_ROOT=${PYENV_ROOT}; export PATH=$PYENV_ROOT/bin:\$PATH; pyenv install ${PYTHON_VERSION} && pyenv global ${PYTHON_VERSION}"
+    su ${USERNAME} -c "export PYENV_ROOT=${PYENV_ROOT}; export PATH=$PYENV_ROOT/bin:\$PATH; pyenv install --skip-existing ${PYTHON_VERSION} && pyenv global ${PYTHON_VERSION}"
 fi
 
 # Additional python versions to be installed but not be set as default.
@@ -71,7 +71,7 @@ if [ ! -z "${ADDITIONAL_VERSIONS}" ]; then
     IFS=","
         read -a additional_versions <<< "$ADDITIONAL_VERSIONS"
         for version in "${additional_versions[@]}"; do
-            su ${USERNAME} -c "export PYENV_ROOT=${PYENV_ROOT}; export PATH=$PYENV_ROOT/bin:\$PATH; pyenv install ${version}"
+            su ${USERNAME} -c "export PYENV_ROOT=${PYENV_ROOT}; export PATH=$PYENV_ROOT/bin:\$PATH; pyenv install --skip-existing ${version}"
         done
     IFS=$OLDIFS
 fi
