@@ -7,7 +7,7 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
+export PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
 PYENV_ROOT="${PYENVPATH:-"/opt/homebrew/opt/pyenv"}"
 PYTHON_VERSION="${PYTHONVERSION:-"latest"}"
 # Comma-separated list of python versions to be installed
