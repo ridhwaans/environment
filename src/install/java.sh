@@ -7,7 +7,7 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-SDKMAN_DIR="${SDKMANPATH:-"/usr/local/sdkman"}"
+export SDKMAN_DIR="${SDKMANPATH:-"/usr/local/sdkman"}"
 JAVA_VERSION="${JAVAVERSION:-"lts"}"
 INSTALL_GRADLE="${INSTALLGRADLE:-"false"}"
 GRADLE_VERSION="${GRADLEVERSION:-"latest"}"
