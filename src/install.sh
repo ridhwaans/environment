@@ -76,7 +76,7 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    source /modules/$module "$@"
+    source $SCRIPT_ROOT/install/$module "$@"
     exit_status=$?
 
     if [ $exit_status -eq 0 ]; then
