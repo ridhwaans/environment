@@ -94,4 +94,4 @@ echo "TARGET_USERNAME=$USERNAME" >> .report
 echo "TARGET_UID=$UID" >> .report
 echo "TARGET_GID=$GID" >> .report
 
-exit $?
+cat .report
