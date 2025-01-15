@@ -6,6 +6,9 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
 echo "For user ${USERNAME}"
 
+# Go to interactive shell as target user
+sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" -i
+
 echo "(1/3) Setting up IDE..."
 if command -v code &>/dev/null; then
   while IFS= read -r extension || [ -n "$extension" ]; do
@@ -88,8 +91,9 @@ fi
 mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwaans/08f2fc5e9b3614a3154cef749a43a568/raw/scripts.sh" -o "$HOME/Source/scripts.sh" && chmod +x "$HOME/Source/scripts.sh"
 
 # Moving to end because it lapses trailing code
-sudo -u $USERNAME vim +silent! +PlugInstall +PlugClean +qall
+vim +silent! +PlugInstall +PlugClean +qall
 
 echo "Done!"
 
+# Back to the original user
 exit $?
