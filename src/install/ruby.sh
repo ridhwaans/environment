@@ -8,7 +8,6 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 RBENV_ROOT="${RBENVPATH:-"/usr/local/rbenv"}"
-RBENV_ROOT="${RBENVPATH:-"/opt/homebrew/opt/rbenv"}"
 RUBY_VERSION="${RUBYVERSION:-"latest"}"
 # Comma-separated list of ruby versions to be installed
 # alongside RUBY_VERSION, but not set as default.
@@ -59,6 +58,8 @@ if [ "$ADJUSTED_ID" != "mac" ]; then
     chmod -R g+rws "${RBENV_ROOT}"
     [ ! -d "${RBENV_ROOT}/plugins/ruby-build" ] && git clone https://github.com/rbenv/ruby-build.git ${RBENV_ROOT}/plugins/ruby-build
     [ ! -d "${RBENV_ROOT}/plugins/ruby-gemset" ] && git clone https://github.com/jf/rbenv-gemset.git ${RBENV_ROOT}/plugins/ruby-gemset
+else
+    RBENV_ROOT="${RBENVPATH:-"/opt/homebrew/opt/rbenv"}"
 fi
 
 if [ "${RUBY_VERSION}" != "" ]; then

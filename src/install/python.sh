@@ -7,8 +7,7 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-export PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
-PYENV_ROOT="${PYENVPATH:-"/opt/homebrew/opt/pyenv"}"
+PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
 PYTHON_VERSION="${PYTHONVERSION:-"latest"}"
 # Comma-separated list of python versions to be installed
 # alongside PYTHON_VERSION, but not set as default.
@@ -57,6 +56,8 @@ if [ "$ADJUSTED_ID" != "mac" ]; then
     chown -R "root:pyenv" ${PYENV_ROOT}
     chmod -R g+rws "${PYENV_ROOT}"
     [ ! -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" ] && git clone https://github.com/pyenv/pyenv-virtualenv.git ${PYENV_ROOT}/plugins/pyenv-virtualenv
+else
+    PYENV_ROOT="${PYENVPATH:-"/opt/homebrew/opt/pyenv"}"
 fi
 
 if [ "${PYTHON_VERSION}" != "" ]; then
