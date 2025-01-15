@@ -7,7 +7,7 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 echo "For user ${USERNAME}"
 
 # Run commands as the target user non-interactively
-sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" <<'EOF'
+sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" bash
 
 echo "SCRIPT_ROOT is $SCRIPT_ROOT"
 echo "HOME is $HOME"
@@ -95,8 +95,6 @@ mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwa
 
 # Moving to end because it lapses trailing code
 vim +silent! +PlugInstall +PlugClean +qall
-
-EOF
 
 echo "Done!"
 
