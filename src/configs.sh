@@ -2,9 +2,7 @@
 
 set -e
 
-start_time=$(date +%s)
-
-SCRIPT_HOME="$(dirname $0)"
+SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
 echo "For user ${USERNAME}"
 
@@ -12,7 +10,7 @@ echo "(1/3) Setting up IDE..."
 if command -v code &>/dev/null; then
   while IFS= read -r extension || [ -n "$extension" ]; do
       code --install-extension "$extension"
-  done < "$SCRIPT_HOME/vscode/extensions"
+  done < "$SCRIPT_ROOT/vscode/extensions"
   code --install-extension PKief.material-icon-theme
 fi
 
@@ -20,7 +18,7 @@ if [ $(uname) = Darwin ]; then
 	echo "(mac)"
 
 	VSCODE_USER_SETTINGS_DIR=$HOME/Library/Application\ Support/Code/User
-	mkdir -p "$VSCODE_USER_SETTINGS_DIR" && cp -f $SCRIPT_HOME/vscode/settings.json "$VSCODE_USER_SETTINGS_DIR"/settings.json
+	mkdir -p "$VSCODE_USER_SETTINGS_DIR" && cp -f $SCRIPT_ROOT/configs/vscode/settings.json "$VSCODE_USER_SETTINGS_DIR"/settings.json
 
 elif [ $(uname) = Linux ]; then
 	if [ -n "$WSL_DISTRO_NAME" ]; then
@@ -29,7 +27,7 @@ elif [ $(uname) = Linux ]; then
     WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
 
 		VSCODE_USER_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
-		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_HOME/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
+		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_ROOT/configs/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
 		# https://github.com/microsoft/vscode/issues/1022
 		# https://github.com/microsoft/vscode/issues/166680
 
@@ -39,7 +37,7 @@ elif [ $(uname) = Linux ]; then
 		echo "(native linux)"
 
 		VSCODE_USER_SETTINGS_DIR=$HOME/.config/Code/User
-		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_HOME/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
+		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_ROOT/configs/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
 	fi
 fi
 
@@ -53,7 +51,7 @@ elif [ $(uname) = Linux ]; then
 
 		WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
     # Windows Terminal
-		cp "$SCRIPT_HOME/windowsterminal/settings.json" ${WINDOWS_HOME}/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState/settings.json
+		cp "$SCRIPT_ROOT/configs/windowsterminal/settings.json" ${WINDOWS_HOME}/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState/settings.json
 
 	elif [ -n "$CODESPACES" ]; then
 		echo "(github codespaces)"
@@ -71,7 +69,7 @@ configs=(
 )
 for config in "${configs[@]}"; do
   [ -L "$HOME/$config" ] && rm "$HOME/$config" && echo "Symlink found and removed at $HOME/$config"
-	cp "$SCRIPT_HOME/$config" "$HOME/" && echo "Copied $SCRIPT_HOME/$config to $HOME/"
+	cp "$SCRIPT_ROOT/configs/$config" "$HOME/" && echo "Copied $SCRIPT_ROOT/configs/$config to $HOME/"
 done;
 
 if [ -n "$WINDOWS_HOME" ]; then
@@ -93,9 +91,5 @@ mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwa
 sudo -u $USERNAME vim +silent! +PlugInstall +PlugClean +qall
 
 echo "Done!"
-
-end_time=$(date +%s)
-elapsed=$(( end_time - start_time ))
-echo "Install took $elapsed seconds."
 
 exit $?

@@ -7,12 +7,14 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
+
+echo "Script directory: $SCRIPT_ROOT"
+
 USERNAME="${USERNAME:-"automatic"}"
 USER_UID="${USERUID:-"automatic"}"
 USER_GID="${USERGID:-"automatic"}"
 UPDATE_RC="${UPDATERC:-"true"}"
-
-start_time=$(date +%s)
 
 if [ $(uname) = Darwin ]; then
   export ADJUSTED_ID="mac"
@@ -35,10 +37,8 @@ elif [ $(uname) = Linux ]; then
   fi
 fi
 
-# load defaults
-source $(dirname $0)/modules/_config.sh
 # load helper functions
-source $(dirname $0)/modules/_helper.sh
+source $SCRIPT_ROOT/_helper.sh
 
 # If in automatic mode, determine if a user already exists, if not use vscode
 if [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
@@ -76,7 +76,7 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    $(which bash) $(dirname $0)/modules/$module "$@"
+    source /modules/$module "$@"
     exit_status=$?
 
     if [ $exit_status -eq 0 ]; then
@@ -87,10 +87,6 @@ for module in "${modules[@]}"; do
     fi
     ((cur++))
 done
-
-end_time=$(date +%s)
-elapsed=$(( end_time - start_time ))
-echo "Install took $elapsed seconds."
 
 echo "elapsed=$elapsed" > .report
 echo "ADJUSTED_ID=$ADJUSTED_ID" >> .report

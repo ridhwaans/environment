@@ -10,8 +10,6 @@ source $ZPLUG_PATH/init.zsh
 
 export ZPLUG_HOME="~/.zsh/bundle"
 
-zplug "agnoster/3712874", from:gist, as:theme, use:agnoster.zsh-theme
-
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
     if read -q; then
@@ -136,6 +134,7 @@ export HISTFILE="$HOME/.zsh_history"
 export EDITOR="/usr/bin/vim"
 export SUDO_EDITOR="$EDITOR"
 
+alias cds="cd $HOME/Source"
 alias evi="$EDITOR $HOME/.vimrc"
 alias ezsh="$EDITOR $HOME/.zshrc"
 alias et="$EDITOR $HOME/.tmux.conf"
@@ -231,13 +230,15 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 export PATH="/usr/local/go/bin:$PATH"
 
-export GOPATH="/go"
+ENVIRONMENT_PATH="$HOME/.local/share/environment"
+
+export PATH="$ENVIRONMENT_PATH/bin:$PATH"
+
+THEME_DIR="$ENVIRONMENT_PATH/src/base/themes"
 
 # *****************
 # ** Shell theme **
 # *****************
-
-THEME_DIR="$HOME/Source/environment/devcontainer-features/src/base/themes"
 
 THEME_NAME="gotham"
 
@@ -248,8 +249,6 @@ THEME_FILE="$THEME_DIR/$THEME_NAME/theme.sh"
 # ******************
 # ** Prompt theme **
 # ******************
-
-THEME_DIR="$HOME/Source/environment/devcontainer-features/src/base/themes"
 
 PROMPT_THEME="agnoster"
 

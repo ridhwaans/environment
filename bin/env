@@ -4,7 +4,6 @@
 function show_help() {
   echo "Usage: $0 [COMMAND] [OPTIONS]"
   echo "Commands:"
-  echo "  install              Install the application"
   echo "  font                 Font management (use 'font help' for details)"
   echo "  theme                Theme management (use 'theme help' for details)"
   echo "  help                 Show this help message"
@@ -20,9 +19,6 @@ command="$1"
 shift
 
 case "$command" in
-  install)
-    echo "Installing the application..."
-    ;;
   font)
     ./font.sh "$@"
     ;;

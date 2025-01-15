@@ -2,9 +2,12 @@
 
 set -e
 
-SCRIPT_HOME="$(dirname $0)"
+SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
+
+echo "Script directory: $SCRIPT_ROOT"
 
 echo "For user ${USERNAME}"
+
 FONT_SIZE="11"
 
 set_font() {

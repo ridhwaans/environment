@@ -2,9 +2,9 @@
 
 set -e
 
-SCRIPT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
-echo "Script directory: $SCRIPT_HOME"
+echo "Script directory: $SCRIPT_ROOT"
 
 echo "For user ${USERNAME}"
 
@@ -23,7 +23,7 @@ set_theme() {
       WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
       WINDOWS_TERMINAL_SETTINGS_DIR=$WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState
 
-      jq --argjson theme "$(cat "$SCRIPT_HOME/$theme/terminal.json")" \
+      jq --argjson theme "$(cat "$SCRIPT_ROOT/$theme/terminal.json")" \
     '.schemes = [ $theme ]' \
     "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json \
     > temp.json && mv temp.json "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json
@@ -54,7 +54,7 @@ tell application "Terminal"
     (* Open the custom theme so that it gets added to the list
        of available terminal themes (note: this will open two
        additional terminal windows). *)
-    do shell script "open '$SCRIPT_HOME/$theme/$profile_theme_name.terminal'"
+    do shell script "open '$SCRIPT_ROOT/$theme/$profile_theme_name.terminal'"
 
     (* Wait a little bit to ensure that the custom theme is added. *)
     delay 1
@@ -107,7 +107,7 @@ EOD
 
   if command -v code &>/dev/null; then
 
-    source $SCRIPT_HOME/$theme/vscode.sh
+    source $SCRIPT_ROOT/$theme/vscode.sh
     code --install-extension $VSCODE_ICON_EXTENSION >/dev/null
     code --install-extension $VSCODE_COLOR_EXTENSION >/dev/null
     sed -i "s/\"workbench.iconTheme\": \".*\"/\"workbench.iconTheme\": \"$VSCODE_ICON_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
