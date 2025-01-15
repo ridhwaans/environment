@@ -6,8 +6,8 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
 echo "For user ${USERNAME}"
 
-# Go to interactive shell as target user
-sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" -i
+# Run commands as the target user non-interactively
+sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" bash <<'EOF'
 
 echo "(1/3) Setting up IDE..."
 if command -v code &>/dev/null; then
@@ -92,6 +92,8 @@ mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwa
 
 # Moving to end because it lapses trailing code
 vim +silent! +PlugInstall +PlugClean +qall
+
+EOF
 
 echo "Done!"
 
