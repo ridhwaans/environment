@@ -4,11 +4,13 @@ set -e
 
 SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
-echo "For user ${USERNAME}"
-
 # Run commands as the target user non-interactively
-sudo --preserve-env=SCRIPT_ROOT -u "$USERNAME" bash
+if [ "$(whoami)" != "$USERNAME" ]; then
+    # Using passwordless sudo to switch to $USERNAME and start a new shell
+    exec sudo -n -u "$USERNAME" bash
+fi
 
+echo "For user ${USERNAME}"
 echo "SCRIPT_ROOT is $SCRIPT_ROOT"
 echo "HOME is $HOME"
 
