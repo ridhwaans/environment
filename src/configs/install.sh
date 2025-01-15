@@ -19,8 +19,8 @@ fi
 if [ $(uname) = Darwin ]; then
 	echo "(mac)"
 
-	VSCODE_SETTINGS_DIR=$HOME/Library/Application\ Support/Code/User
-	mkdir -p "$VSCODE_SETTINGS_DIR" && cp -f $SCRIPT_HOME/vscode/settings.json "$VSCODE_SETTINGS_DIR"/settings.json
+	VSCODE_USER_SETTINGS_DIR=$HOME/Library/Application\ Support/Code/User
+	mkdir -p "$VSCODE_USER_SETTINGS_DIR" && cp -f $SCRIPT_HOME/vscode/settings.json "$VSCODE_USER_SETTINGS_DIR"/settings.json
 
 elif [ $(uname) = Linux ]; then
 	if [ -n "$WSL_DISTRO_NAME" ]; then
@@ -28,8 +28,8 @@ elif [ $(uname) = Linux ]; then
 
     WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
 
-		VSCODE_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
-		mkdir -p $VSCODE_SETTINGS_DIR && cp -f $SCRIPT_HOME/vscode/settings.json $VSCODE_SETTINGS_DIR/settings.json
+		VSCODE_USER_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
+		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_HOME/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
 		# https://github.com/microsoft/vscode/issues/1022
 		# https://github.com/microsoft/vscode/issues/166680
 
@@ -38,8 +38,8 @@ elif [ $(uname) = Linux ]; then
 	else
 		echo "(native linux)"
 
-		VSCODE_SETTINGS_DIR=$HOME/.config/Code/User
-		mkdir -p $VSCODE_SETTINGS_DIR && cp -f $SCRIPT_HOME/vscode/settings.json $VSCODE_SETTINGS_DIR/settings.json
+		VSCODE_USER_SETTINGS_DIR=$HOME/.config/Code/User
+		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_HOME/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
 	fi
 fi
 

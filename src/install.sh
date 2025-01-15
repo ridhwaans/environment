@@ -7,6 +7,11 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+USERNAME="${USERNAME:-"automatic"}"
+USER_UID="${USERUID:-"automatic"}"
+USER_GID="${USERGID:-"automatic"}"
+UPDATE_RC="${UPDATERC:-"true"}"
+
 start_time=$(date +%s)
 
 if [ $(uname) = Darwin ]; then

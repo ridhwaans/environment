@@ -7,6 +7,9 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+EXERCISM_VERSION="${EXERCISMVERSION:-"latest"}"
+TERRAFORM_VERSION="${TERRAFORMVERSION:-"latest"}"
+
 if [ "$ADJUSTED_ID" = "mac" ]; then
   run_brew_command_as_target_user tap aws/tap
   run_brew_command_as_target_user tap hashicorp/tap
@@ -45,7 +48,7 @@ else
   fi
 
   # Install cfn-lint
-  export PYENV_ROOT="${PYENV_PATH}"
+  PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
   su ${USERNAME} -c "export PYENV_ROOT=${PYENV_ROOT}; export PATH=$PYENV_ROOT/bin:\$PATH; pyenv exec pip install -U cfn-lint"
 
   # Install exercism-cli

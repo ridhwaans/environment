@@ -7,6 +7,10 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+NEW_PASSWORD="${NEWPASSWORD:-"skip"}"
+SSHD_PORT="${SSHDPORT:-"2222"}"
+START_SSHD="${STARTSSHD:-"false"}"
+
 # Debian / Ubuntu packages
 install_debian_packages(){
   # Ensure apt is in non-interactive to avoid prompts

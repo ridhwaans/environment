@@ -7,11 +7,15 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-export SDKMAN_DIR="${SDKMAN_PATH}"
-
+SDKMAN_DIR="${SDKMANPATH:-"/usr/local/sdkman"}"
+JAVA_VERSION="${JAVAVERSION:-"lts"}"
+INSTALL_GRADLE="${INSTALLGRADLE:-"false"}"
+GRADLE_VERSION="${GRADLEVERSION:-"latest"}"
+INSTALL_MAVEN="${INSTALLMAVEN:-"false"}"
+MAVEN_VERSION="${MAVENVERSION:-"latest"}"
 # Comma-separated list of java versions to be installed
 # alongside JAVA_VERSION, but not set as default.
-ADDITIONAL_VERSIONS="${JAVA_ADDITIONAL_VERSIONS:-""}"
+ADDITIONAL_VERSIONS="${JAVAADDITIONALVERSIONS:-""}"
 
 # Use SDKMAN to install something using a partial version match
 sdk_install() {
@@ -68,18 +72,6 @@ else
     # Install SDKMAN
     curl -sSL "https://get.sdkman.io?rcupdate=false" | bash
     chown -R $USERNAME ${SDKMAN_DIR}
-fi
-
-sdkman_rc_snippet=$(cat <<EOF
-export SDKMAN_DIR="$SDKMAN_DIR"
-
-[[ -s "\$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "\$SDKMAN_DIR/bin/sdkman-init.sh"
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-    updaterc "zsh" "${sdkman_rc_snippet}"
-    updaterc "bash" "${sdkman_rc_snippet}"
 fi
 
 sdk_install java ${JAVA_VERSION} "\\s*" "(\\.[a-z0-9]+)*-${JDK_DISTRO}\\s*" ".*-[a-z]+$" "true"

@@ -7,6 +7,9 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+TMUX_VERSION="${TMUXVERSION:-"latest"}"
+TPM_PATH="${TPMPATH:-"/usr/local/share/tmux/bundle"}"
+
 # Mac OS packages
 install_mac_packages() {
     packages=(
@@ -67,23 +70,5 @@ if [ "$ADJUSTED_ID" != "mac" ]; then
   chown -R "root:tpm" "$(dirname $TPM_PATH)"
   chmod -R 775 "$(dirname $TPM_PATH)"
 fi
-
-tmux_conf_snippet=$(cat << EOF
-# Enable mouse control (clickable windows, panes, resizable panes)
-set -g mouse on
-
-# List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-
-# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run-shell "$TPM_PATH/tpm"
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-  updaterc "tmux" "${tmux_conf_snippet}"
-fi
-
 
 echo "Done!"

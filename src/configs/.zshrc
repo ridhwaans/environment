@@ -245,5 +245,17 @@ THEME_FILE="$THEME_DIR/$THEME_NAME/theme.sh"
 
 [[ -s $THEME_FILE ]] && source $THEME_FILE
 
+# ******************
+# ** Prompt theme **
+# ******************
+
+THEME_DIR="$HOME/Source/environment/devcontainer-features/src/base/themes"
+
+PROMPT_THEME="agnoster"
+
+PROMPT_THEME_FILE="$THEME_DIR/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
+
+[[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
+
 # start or attach to tmux default sessions
 tds

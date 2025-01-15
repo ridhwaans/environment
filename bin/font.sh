@@ -20,7 +20,7 @@ while [[ "$#" -gt 0 ]]; do
       if [[ -n "$2" && ! "$2" =~ ^- ]]; then
         case "$2" in
           "Roboto Mono")
-            set_font "Roboto Mono for Powerline.ttf" "https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20for%20Powerline.ttf"
+            set_font "RobotoMonoForPowerline-Regular" "Roboto Mono for Powerline.ttf" "https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20for%20Powerline.ttf"
             ;;
           *)
             echo "Error: Unknown font '$2'. Available fonts: Roboto Mono"

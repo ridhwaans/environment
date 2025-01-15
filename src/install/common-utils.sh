@@ -7,6 +7,9 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+VIMPLUG_PATH="${VIMPLUGPATH:-"/usr/local/share/vim/bundle"}"
+ZSHPLUG_PATH="${ZSHPLUGPATH:-"/usr/local/share/zsh/bundle"}"
+
 # Mac OS packages
 install_mac_packages() {
   if ! command -v xcode-select &>/dev/null; then
@@ -171,54 +174,6 @@ if [ "$ADJUSTED_ID" != "mac" ]; then
   usermod -a -G vimplug ${USERNAME}
   chown -R "root:vimplug" "$(dirname $VIMPLUG_PATH)"
   chmod -R 775 "$(dirname $VIMPLUG_PATH)"
-fi
-
-zsh_rc_snippet=$(cat <<EOF
-export LANG=en_US.UTF-8
-export ZPLUG_HOME="~/.zsh/bundle"
-export ZSHPLUG_PATH="$ZSHPLUG_PATH"
-
-source \$ZSHPLUG_PATH/init.zsh
-fpath+=("\$ZSHPLUG_PATH/repos")
-
-zplug "agnoster/3712874", from:gist, as:theme, use:agnoster.zsh-theme
-
-if ! zplug check --verbose; then
-  echo; zplug install
-fi
-
-zplug load --verbose
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-  updaterc "zsh" "${zsh_rc_snippet}"
-fi
-
-brew_rc_snippet=$(cat <<EOF
-if [ \$(uname) = Darwin ]; then
-  eval \$(/opt/homebrew/bin/brew shellenv)
-fi
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-  updaterc "bash" "${brew_rc_snippet}"
-  updaterc "zsh" "${brew_rc_snippet}"
-fi
-
-vim_rc_snippet=$(cat <<EOF
-let g:vim_plug_home="$VIMPLUG_PATH"
-
-execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
-call plug#begin(g:vim_plug_home . '/plugged')
-call plug#end()
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-  updaterc "vim" "${vim_rc_snippet}"
-  sudo -u $USERNAME vim +silent! +PlugInstall +PlugClean +qall
 fi
 
 echo "Done!"

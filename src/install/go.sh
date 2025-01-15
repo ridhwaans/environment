@@ -7,6 +7,10 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+GO_DIR="${GODIR:-"/usr/local/go"}"
+GO_DIR="${GODIR:-"/opt/homebrew/opt/go"}"
+GO_VERSION="${GOVERSION:-"latest"}"
+
 if [ "$ADJUSTED_ID" = "mac" ]; then
     packages=(
       go
@@ -35,17 +39,6 @@ else
 
   chown -R "root:golang" "${GO_DIR}"
   chmod -R g+rws "${GO_DIR}"
-fi
-
-go_rc_snippet=$(cat << EOF
-export GO_DIR="${GO_DIR}"
-export PATH="\$GO_DIR/bin:\$PATH"
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-  updaterc "zsh" "${go_rc_snippet}"
-  updaterc "bash" "${go_rc_snippet}"
 fi
 
 echo "Done!"

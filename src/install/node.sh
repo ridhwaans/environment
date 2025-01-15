@@ -7,11 +7,12 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-export NVM_DIR="${NVM_PATH}"
-
+NVM_DIR="${NVMPATH:-"/usr/local/nvm"}"
+NODE_VERSION="${NODEVERSION:-"latest"}"
+BUN_PATH="${BUNPATH:-"/usr/local/bun"}"
 # Comma-separated list of node versions to be installed
 # alongside NODE_VERSION, but not set as default.
-ADDITIONAL_VERSIONS="${NODE_ADDITIONAL_VERSIONS:-""}"
+ADDITIONAL_VERSIONS="${NODEADDITIONALVERSIONS:-""}"
 
 if [ "$ADJUSTED_ID" != "mac" ]; then
     # Create nvm group to the user's UID or GID to change while still allowing access to nvm
@@ -38,17 +39,6 @@ elif [ "${NODE_VERSION}" = "latest" ]; then
     NODE_VERSION="node"
 fi
 
-nvm_rc_snippet=$(cat <<EOF
-export NVM_DIR="${NVM_DIR}"
-[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-    updaterc "zsh" "${nvm_rc_snippet}"
-    updaterc "bash" "${nvm_rc_snippet}"
-fi
-
 if [ "${NODE_VERSION}" != "" ]; then
     su ${USERNAME} -c "umask 0002 && . ${NVM_DIR}/nvm.sh && nvm install '${NODE_VERSION}' && nvm alias default '${NODE_VERSION}'"
 fi
@@ -68,13 +58,6 @@ if [ ! -z "${ADDITIONAL_VERSIONS}" ]; then
     IFS=$OLDIFS
 fi
 
-
-nvm_rc_snippet=$(cat <<EOF
-export NVM_DIR="${NVM_DIR}"
-[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
-EOF
-)
-
 export BUN_INSTALL="${BUN_PATH}"
 
 # Install bun if not installed
@@ -89,17 +72,6 @@ if [ ! -d "${BUN_INSTALL}" ]; then
     curl -fsSL https://bun.sh/install | bash
     chown -R "root:bun" ${BUN_INSTALL}
     chmod -R g+rws "${BUN_INSTALL}"
-fi
-
-bun_rc_snippet=$(cat <<EOF
-export BUN_INSTALL="${BUN_INSTALL}"
-export PATH="\$BUN_INSTALL/bin:\$PATH"
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-  updaterc "zsh" "${bun_rc_snippet}"
-  updaterc "bash" "${bun_rc_snippet}"
 fi
 
 echo "Done!"

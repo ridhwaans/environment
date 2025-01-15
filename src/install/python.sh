@@ -7,11 +7,12 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-export PYENV_ROOT="${PYENV_PATH}"
-
+PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
+PYENV_ROOT="${PYENVPATH:-"/opt/homebrew/opt/pyenv"}"
+PYTHON_VERSION="${PYTHONVERSION:-"latest"}"
 # Comma-separated list of python versions to be installed
 # alongside PYTHON_VERSION, but not set as default.
-ADDITIONAL_VERSIONS="${PYTHON_ADDITIONAL_VERSIONS:-""}"
+ADDITIONAL_VERSIONS="${PYTHONADDITIONALVERSIONS:-""}"
 
 # Mac OS packages
 install_mac_packages() {
@@ -56,22 +57,6 @@ if [ "$ADJUSTED_ID" != "mac" ]; then
     chown -R "root:pyenv" ${PYENV_ROOT}
     chmod -R g+rws "${PYENV_ROOT}"
     [ ! -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" ] && git clone https://github.com/pyenv/pyenv-virtualenv.git ${PYENV_ROOT}/plugins/pyenv-virtualenv
-fi
-
-pyenv_rc_snippet=$(cat <<EOF
-export PYENV_ROOT="$PYENV_ROOT"
-
-[[ -d \$PYENV_ROOT/bin ]] && export PATH="\$PYENV_ROOT/bin:\$PATH"
-
-eval "\$(pyenv init -)"
-
-eval "\$(pyenv virtualenv-init -)"
-EOF
-)
-
-if [ "${UPDATE_RC}" = "true" ]; then
-    updaterc "zsh" "${pyenv_rc_snippet}"
-    updaterc "bash" "${pyenv_rc_snippet}"
 fi
 
 if [ "${PYTHON_VERSION}" != "" ]; then
