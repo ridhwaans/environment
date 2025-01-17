@@ -9,7 +9,7 @@ fi
 
 SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
-echo "Script directory: $SCRIPT_ROOT"
+echo "SCRIPT_ROOT: $SCRIPT_ROOT"
 
 # load helper functions
 source $SCRIPT_ROOT/_helper.sh
@@ -30,17 +30,7 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    sudo bash -c "
-    export ADJUSTED_ID=$ADJUSTED_ID
-    export USERNAME=$USERNAME
-    source $SCRIPT_ROOT/_helper.sh
-    if [ \$(id -u) -ne 0 ]; then
-      echo 'Script must be run as root. Exiting.'
-      exit 1
-    fi
-    echo 'id is 0. Starting $module'
-    source $SCRIPT_ROOT/install/$module"
-
+    sudo $SCRIPT_ROOT/install/$module
     exit_status=$?
 
     if [ $exit_status -eq 0 ]; then
