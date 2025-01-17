@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ENVIRONMENT_PATH="${ENVIRONMENT_PATH:-"~/.local/share"}"
+ENVIRONMENT_PATH="${ENVIRONMENT_PATH:-"$HOME/.local/share"}"
 
 rm -rf $ENVIRONMENT_PATH/environment
 git clone https://github.com/ridhwaans/environment.git $ENVIRONMENT_PATH/environment

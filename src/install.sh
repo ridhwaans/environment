@@ -6,9 +6,6 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
 echo "SCRIPT_ROOT: $SCRIPT_ROOT"
 
-# load helper functions
-source $SCRIPT_ROOT/_helper.sh
-
 modules=(
   common-utils.sh
   tmux.sh
@@ -26,7 +23,7 @@ cur=1
 
 for module in "${modules[@]}"; do
     sudo -E bash -c "
-        source $SCRIPT_ROOT/_helper.sh
+        source $SCRIPT_ROOT/install/_helper.sh
         bash $SCRIPT_ROOT/install/$module"
     exit_status=$?
 
