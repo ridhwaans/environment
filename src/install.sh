@@ -11,54 +11,8 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
 echo "Script directory: $SCRIPT_ROOT"
 
-USERNAME="${USERNAME:-"automatic"}"
-USER_UID="${USERUID:-"automatic"}"
-USER_GID="${USERGID:-"automatic"}"
-UPDATE_RC="${UPDATERC:-"true"}"
-
-if [ $(uname) = Darwin ]; then
-  export ADJUSTED_ID="mac"
-elif [ $(uname) = Linux ]; then
-
-  if [ ! -f /etc/os-release ]; then
-    echo "/etc/os-release file not found."
-    exit 1
-  fi
-
-  # Bring in ID, ID_LIKE, VERSION_ID, VERSION_CODENAME
-  . /etc/os-release
-
-  # Get an adjusted ID independent of distro variants
-  if [ "${ID}" = "debian" ] || [ "${ID_LIKE}" = "debian" ]; then
-    export ADJUSTED_ID="debian"
-  else
-    echo "Linux distro ${ID} not supported."
-    exit 1
-  fi
-fi
-
 # load helper functions
 source $SCRIPT_ROOT/_helper.sh
-
-# If in automatic mode, determine if a user already exists, if not use vscode
-if [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
-  USERNAME=""
-  if [ "$ADJUSTED_ID" = "mac" ]; then
-    FIRST_USER=$(dscl . -list /Users UniqueID | awk -v val=501 '$2 == val {print $1}')
-  else
-    FIRST_USER="$(awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd)"
-  fi
-  if id -u ${FIRST_USER} > /dev/null 2>&1; then
-    USERNAME=${FIRST_USER}
-  fi
-  if [ "${USERNAME}" = "" ]; then
-    USERNAME=vscode
-  fi
-elif [ "${USERNAME}" = "none" ]; then
-  USERNAME=root
-  USER_UID=0
-  USER_GID=0
-fi
 
 modules=(
   common-utils.sh

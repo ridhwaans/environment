@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-rm -rf ~/.local/share/environment
-git clone https://github.com/ridhwaans/environment.git ~/.local/share/environment
+ENVIRONMENT_PATH="${ENVIRONMENT_PATH:-"~/.local/share"}"
 
-echo "Installation starting..."
-source ~/.local/share/environment/install.sh
+rm -rf $ENVIRONMENT_PATH/environment
+git clone https://github.com/ridhwaans/environment.git $ENVIRONMENT_PATH/environment
+
+source $ENVIRONMENT_PATH/environment/install.sh
