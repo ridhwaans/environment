@@ -16,6 +16,7 @@ install_mac_packages() {
       tmux
     )
     run_brew_command_as_target_user install "${packages[@]}"
+    exit 0
 }
 
 # Debian / Ubuntu packages
@@ -36,7 +37,7 @@ case "${ADJUSTED_ID}" in
 esac
 
 if [ "$ADJUSTED_ID" != "debian" ]; then
-  echo "Current distro not supported for sshd installation"
+  echo "Current distro not supported for tmux installation"
   exit 0
 fi
 

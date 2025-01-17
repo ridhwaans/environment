@@ -9,7 +9,6 @@ fi
 
 NVM_DIR="${NVMPATH:-"/usr/local/nvm"}"
 NODE_VERSION="${NODEVERSION:-"latest"}"
-BUN_PATH="${BUNPATH:-"/usr/local/bun"}"
 # Comma-separated list of node versions to be installed
 # alongside NODE_VERSION, but not set as default.
 ADDITIONAL_VERSIONS="${NODEADDITIONALVERSIONS:-""}"
@@ -58,20 +57,23 @@ if [ ! -z "${ADDITIONAL_VERSIONS}" ]; then
     IFS=$OLDIFS
 fi
 
-export BUN_INSTALL="${BUN_PATH}"
+export BUN_INSTALL="${BUNPATH:-"/usr/local/bun"}"
 
-# Install bun if not installed
-if [ ! -d "${BUN_INSTALL}" ]; then
+if [ "$ADJUSTED_ID" != "mac" ]; then
     # Create bun group, dir, and set sticky bit
     if ! cat /etc/group | grep -e "^bun:" > /dev/null 2>&1; then
         groupadd -r bun
     fi
     usermod -a -G bun ${USERNAME}
+
     umask 0002
     # Install bun
-    curl -fsSL https://bun.sh/install | bash
+    [ ! -d ${BUN_INSTALL} ] && curl -fsSL https://bun.sh/install | bash
     chown -R "root:bun" ${BUN_INSTALL}
     chmod -R g+rws "${BUN_INSTALL}"
+else
+    [ ! -d ${BUN_INSTALL} ] && curl -fsSL https://bun.sh/install | bash
+    chown -R $USERNAME ${BUN_INSTALL}
 fi
 
 echo "Done!"
