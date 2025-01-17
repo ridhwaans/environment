@@ -31,10 +31,14 @@ cur=1
 
 for module in "${modules[@]}"; do
     sudo bash -c "
-      export ADJUSTED_ID=$ADJUSTED_ID
-      export USERNAME=$USERNAME
-      source $SCRIPT_ROOT/_helper.sh
-      sudo . $SCRIPT_ROOT/install/$module"
+    export ADJUSTED_ID=$ADJUSTED_ID
+    export USERNAME=$USERNAME
+    source $SCRIPT_ROOT/_helper.sh
+    if [ \$(id -u) -ne 0 ]; then
+      echo 'Script must be run as root. Exiting.'
+      exit 1
+    fi
+    source $SCRIPT_ROOT/install/$module"
 
     exit_status=$?
 
