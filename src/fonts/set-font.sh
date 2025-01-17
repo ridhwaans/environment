@@ -2,12 +2,6 @@
 
 set -e
 
-SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
-
-echo "SCRIPT_ROOT: $SCRIPT_ROOT"
-
-FONT_SIZE="11"
-
 set_font() {
   local profile_font_name=$1
 	local file=$2
@@ -15,6 +9,7 @@ set_font() {
   # Extract the base name (without the extension)
   base_name="${file%.*}"
   echo $base_name
+  FONT_SIZE="11"
 
   # Install
 	if ! $(fc-list | grep -i "$base_name" >/dev/null); then
@@ -104,3 +99,5 @@ EOD
   fi
 
 }
+
+export -f set_font
