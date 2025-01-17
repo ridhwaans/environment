@@ -30,7 +30,12 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    source $SCRIPT_ROOT/install/$module "$@"
+    sudo bash -c "
+      export ADJUSTED_ID=$ADJUSTED_ID
+      export USERNAME=$USERNAME
+      source $SCRIPT_ROOT/_helper.sh
+      source $SCRIPT_ROOT/install/$module"
+
     exit_status=$?
 
     if [ $exit_status -eq 0 ]; then
