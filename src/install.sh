@@ -38,6 +38,7 @@ for module in "${modules[@]}"; do
       echo 'Script must be run as root. Exiting.'
       exit 1
     fi
+    echo 'id is 0. Starting $module'
     source $SCRIPT_ROOT/install/$module"
 
     exit_status=$?
