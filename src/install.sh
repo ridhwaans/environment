@@ -22,7 +22,9 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    sudo -E bash -c "
+    sudo bash -c "
+        export USERNAME=$USERNAME
+        export ADJUSTED_ID=$ADJUSTED_ID
         source $SCRIPT_ROOT/_helper.sh
         bash $SCRIPT_ROOT/install/$module"
     exit_status=$?
