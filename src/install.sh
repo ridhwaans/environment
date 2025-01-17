@@ -30,9 +30,7 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    sudo bash -c "
-      export ADJUSTED_ID=$ADJUSTED_ID
-      export USERNAME=$USERNAME
+    sudo -E -u root bash -c "
       source $SCRIPT_ROOT/_helper.sh
       source $SCRIPT_ROOT/install/$module"
 
