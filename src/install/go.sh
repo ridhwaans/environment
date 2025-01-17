@@ -8,7 +8,6 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 GO_DIR="${GODIR:-"/usr/local/go"}"
-GO_DIR="${GODIR:-"/opt/homebrew/opt/go"}"
 GO_VERSION="${GOVERSION:-"latest"}"
 
 if [ "$ADJUSTED_ID" = "mac" ]; then

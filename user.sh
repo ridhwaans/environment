@@ -82,3 +82,11 @@ fi
 
 echo "debugging username, uid, gid, shell"
 cat /etc/passwd
+
+echo "elapsed=$elapsed" > .report
+echo "ADJUSTED_ID=$ADJUSTED_ID" >> .report
+echo "TARGET_USERNAME=$USERNAME" >> .report
+echo "TARGET_UID=$UID" >> .report
+echo "TARGET_GID=$GID" >> .report
+
+cat .report

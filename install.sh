@@ -22,5 +22,5 @@ elif [ $(uname) = Linux ]; then
 fi
 
 echo "Installation starting..."
-source ~/.local/share/environment/src/install.sh
-source ~/.local/share/environment/src/configs.sh
+source $ENVIRONMENT_PATH/environment/src/install.sh
+source $ENVIRONMENT_PATH/environment/src/configs.sh
