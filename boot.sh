@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-ENVIRONMENT_PATH="${ENVIRONMENT_PATH:-"$HOME/.local/share"}"
+ENVIRONMENT_DIR="${ENVIRONMENT_DIR:-"$HOME/.local/share/environment"}"
 
-rm -rf $ENVIRONMENT_PATH/environment
-git clone https://github.com/ridhwaans/environment.git $ENVIRONMENT_PATH/environment
+rm -rf $ENVIRONMENT_DIR
+git clone https://github.com/ridhwaans/environment.git $ENVIRONMENT_DIR
 
-source $ENVIRONMENT_PATH/environment/install.sh
+source $ENVIRONMENT_DIR/install.sh

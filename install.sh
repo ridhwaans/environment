@@ -23,5 +23,5 @@ fi
 
 USERNAME=$(whoami)
 echo "Installation starting..."
-source $ENVIRONMENT_PATH/environment/src/install.sh
-source $ENVIRONMENT_PATH/environment/src/configs.sh
+source $ENVIRONMENT_DIR/src/install.sh
+source $ENVIRONMENT_DIR/src/configs.sh

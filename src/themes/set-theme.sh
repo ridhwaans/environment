@@ -4,9 +4,7 @@ set -e
 
 SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
 
-echo "Script directory: $SCRIPT_ROOT"
-
-echo "For user ${USERNAME}"
+echo "SCRIPT_ROOT: $SCRIPT_ROOT"
 
 set_theme() {
   local profile_theme_name=$1

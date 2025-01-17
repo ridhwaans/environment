@@ -20,10 +20,10 @@ shift
 
 case "$command" in
   font)
-    ./font.sh "$@"
+    $ENVIRONMENT_DIR/bin/font.sh "$@"
     ;;
   theme)
-    ./theme.sh "$@"
+    $ENVIRONMENT_DIR/bin/theme.sh "$@"
     ;;
   help)
     show_help

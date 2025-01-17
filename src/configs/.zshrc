@@ -230,11 +230,11 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 export PATH="/usr/local/go/bin:$PATH"
 
-ENVIRONMENT_PATH="$HOME/.local/share/environment"
+export ENVIRONMENT_DIR="$HOME/.local/share/environment"
 
-export PATH="$ENVIRONMENT_PATH/bin:$PATH"
+export PATH="$ENVIRONMENT_DIR/bin:$PATH"
 
-THEME_DIR="$ENVIRONMENT_PATH/src/base/themes"
+THEME_DIR="$ENVIRONMENT_DIR/src/base/themes"
 
 # *****************
 # ** Shell theme **

@@ -11,7 +11,7 @@ echo "(1/3) Setting up IDE..."
 if command -v code &>/dev/null; then
   while IFS= read -r extension || [ -n "$extension" ]; do
       code --install-extension "$extension"
-  done < "$SCRIPT_ROOT/vscode/extensions"
+  done < "$SCRIPT_ROOT/configs/vscode/extensions"
   code --install-extension PKief.material-icon-theme
 fi
 
