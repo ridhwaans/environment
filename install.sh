@@ -21,6 +21,7 @@ elif [ $(uname) = Linux ]; then
   fi
 fi
 
+USERNAME=$(whoami)
 echo "Installation starting..."
 source $ENVIRONMENT_PATH/environment/src/install.sh
 source $ENVIRONMENT_PATH/environment/src/configs.sh
