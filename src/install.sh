@@ -25,7 +25,7 @@ total=${#modules[@]}
 cur=1
 
 for module in "${modules[@]}"; do
-    sudo $SCRIPT_ROOT/install/$module
+    sudo bash $SCRIPT_ROOT/install/$module
     exit_status=$?
 
     if [ $exit_status -eq 0 ]; then
