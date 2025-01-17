@@ -23,7 +23,7 @@ cur=1
 
 for module in "${modules[@]}"; do
     sudo -E bash -c "
-        source $SCRIPT_ROOT/install/_helper.sh
+        source $SCRIPT_ROOT/_helper.sh
         bash $SCRIPT_ROOT/install/$module"
     exit_status=$?
 
