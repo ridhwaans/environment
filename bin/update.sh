@@ -13,6 +13,9 @@ clean_branch() {
 
 # Function to check if the current branch has unpulled commits
 check_unpulled_commits() {
+    echo "Fetching the latest changes from the remote repository..."
+    git -C "$ENVIRONMENT_DIR" fetch origin main  # Update remote tracking information
+
     local status=$(git -C "$ENVIRONMENT_DIR" status -uno | grep "Your branch is behind")
     if [[ -n "$status" ]]; then
         echo "There are unpulled commits. Pulling latest changes..."
