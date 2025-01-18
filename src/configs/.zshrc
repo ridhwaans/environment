@@ -237,7 +237,7 @@ export NVM_DIR="/usr/local/nvm"
 
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-export BUN_INSTALL="/usr/local/.bun"
+export BUN_INSTALL="/usr/local/bun"
 
 export PATH="$BUN_INSTALL/bin:$PATH"
 
