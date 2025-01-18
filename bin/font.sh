@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Display help for font management
 function font_help() {
   echo "Usage: $(basename "$0") [OPTIONS]"
   echo "Options:"
@@ -8,7 +7,6 @@ function font_help() {
   echo "  help           Show this help message"
 }
 
-# Font management logic
 if [[ "$#" -lt 1 ]]; then
   font_help
   exit 1

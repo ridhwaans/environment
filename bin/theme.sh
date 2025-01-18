@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Display help for theme management
 function theme_help() {
   echo "Usage: $(basename "$0") [OPTIONS]"
   echo "Themes:"
@@ -8,7 +7,6 @@ function theme_help() {
   echo "  help   Show this help message"
 }
 
-# Theme management logic
 if [[ "$#" -lt 1 ]]; then
   theme_help
   exit 1

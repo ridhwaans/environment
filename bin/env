@@ -3,17 +3,16 @@
 source $ENVIRONMENT_DIR/src/fonts/set-font.sh
 source $ENVIRONMENT_DIR/src/themes/set-theme.sh
 
-# Display help for the main script
 function show_help() {
   echo "Usage: $(basename "$0") [COMMAND] [OPTIONS]"
   echo "Commands:"
-  echo "  update               Get updates if there are any"
+  echo "  update               Get the newest changes if there are any"
   echo "  font                 Font management (use 'font help' for details)"
   echo "  theme                Theme management (use 'theme help' for details)"
   echo "  help                 Show this help message"
 }
 
-# Main script logic
+# Main
 if [[ "$#" -lt 1 ]]; then
   show_help
   exit 1
