@@ -2,7 +2,7 @@
 
 # Display help for theme management
 function theme_help() {
-  echo "Usage: $0 [THEME]"
+  echo "Usage: $(basename "$0") [OPTIONS]"
   echo "Themes:"
   echo "  Gotham"
   echo "  help   Show this help message"

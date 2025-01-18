@@ -5,7 +5,7 @@ source $ENVIRONMENT_DIR/src/themes/set-theme.sh
 
 # Display help for the main script
 function show_help() {
-  echo "Usage: $0 [COMMAND] [OPTIONS]"
+  echo "Usage: $(basename "$0") [COMMAND] [OPTIONS]"
   echo "Commands:"
   echo "  update               Get updates if there are any"
   echo "  font                 Font management (use 'font help' for details)"

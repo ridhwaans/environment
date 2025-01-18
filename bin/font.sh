@@ -2,7 +2,7 @@
 
 # Display help for font management
 function font_help() {
-  echo "Usage: $0 [OPTIONS]"
+  echo "Usage: $(basename "$0") [OPTIONS]"
   echo "Options:"
   echo "  -n, --name     Specify the font name"
   echo "  help           Show this help message"
