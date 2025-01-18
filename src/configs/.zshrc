@@ -267,8 +267,13 @@ PROMPT_THEME="agnoster"
 
 PROMPT_THEME_FILE="$THEME_DIR/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
 
-setopt promptsubst # enable command substitution in prompt
 [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
+
+
+setopt promptsubst # enable command substitution in prompt (for shell prompt theme)
+setopt APPEND_HISTORY # append to Zsh history instead of overwriting
+setopt HIST_IGNORE_DUPS # prevent duplicate commands in Zsh history
+setopt HIST_IGNORE_SPACE # prevent commands starting with whitespace in Zsh history
 
 # start or attach to tmux default sessions
 tds

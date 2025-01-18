@@ -16,8 +16,8 @@ fi
 
 case "$1" in
  Gotham)
-    echo "Theme set to: $1"
     set_theme "Gotham" "gotham"
+    echo "Theme set to: $1"
     ;;
   help)
     theme_help

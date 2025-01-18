@@ -44,7 +44,7 @@ run_brew_command_as_target_user() {
 }
 
 conditional_grep() {
-    # use gnu grep for pcre, else use bsd grep
+    # use gnu grep for pcre on mac
     if [ "$ADJUSTED_ID" = "mac" ]; then
         ggrep "$@"
     else

@@ -2,6 +2,15 @@
 
 set -e
 
+conditional_sed() {
+    # use gnu sed for no explicit backup in-place editing on mac
+    if [ $(uname) = Darwin ]; then
+        gsed "$@"
+    else
+        sed "$@"
+    fi
+}
+
 set_theme() {
   local profile_theme_name=$1
   local theme=$2
@@ -17,10 +26,15 @@ set_theme() {
       WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
       WINDOWS_TERMINAL_SETTINGS_DIR=$WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState
 
-      jq --argjson theme "$(cat "$ENVIRONMENT_DIR/src/themes/$theme/terminal.json")" \
-    '.schemes = [ $theme ]' \
-    "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json \
-    > temp.json && mv temp.json "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json
+      # in script, echo expands glob, but ls -d does not
+      SETTINGS_FILE=$(echo $WINDOWS_TERMINAL_SETTINGS_DIR)/settings.json
+      echo $SETTINGS_FILE
+
+      echo $ENVIRONMENT_DIR/src/themes/$theme/terminal.json
+      jq --slurpfile theme "$ENVIRONMENT_DIR/src/themes/$theme/terminal.json" \
+      '.schemes = [$theme]' \
+      $SETTINGS_FILE \
+      > temp.json && mv temp.json $SETTINGS_FILE
 
     elif [ -n "$CODESPACES" ]; then
       echo "(github codespaces)"
@@ -110,15 +124,16 @@ EOD
 
   # Shell
 
-  sed -i '' "s/^THEME_NAME=.*/THEME_NAME=\"$theme\"/" ~/.zshrc
+  conditional_sed -i "s/^THEME_NAME=.*/THEME_NAME=\"$theme\"/" $HOME/.zshrc
 
   # Prompt
 
-  sed -i '' "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" ~/.zshrc
+  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" $HOME/.zshrc
 
   # Tmux
 
-  sed -i '' "s/^set -g @theme_name .*/set -g @theme_name \"$theme\"/" ~/.tmux.conf
+  conditional_sed -i "s/^set -g @theme_name .*/set -g @theme_name \"$theme\"/" $HOME/.tmux.conf
 }
 
 export -f set_theme
+export -f conditional_sed
