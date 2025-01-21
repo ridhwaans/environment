@@ -8,7 +8,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 VIMPLUG_PATH="${VIMPLUGPATH:-"/usr/local/share/vim/bundle"}"
-ZSHPLUG_PATH="${ZSHPLUGPATH:-"/usr/local/share/zsh/bundle"}"
+ZSHPLUG_ROOT="${ZSHPLUGROOT:-"/usr/local/share/zsh/bundle"}"
 
 # Mac OS packages
 install_mac_packages() {
@@ -98,17 +98,17 @@ case "${ADJUSTED_ID}" in
 esac
 
 echo "Installing system-wide plugin manager for shell..."
-[ ! -d ${ZSHPLUG_PATH} ] && git clone https://github.com/zplug/zplug ${ZSHPLUG_PATH}
+[ ! -d ${ZSHPLUG_ROOT} ] && git clone https://github.com/zplug/zplug ${ZSHPLUG_ROOT}
 if [ "$ADJUSTED_ID" != "mac" ]; then
   # Create group
   if ! cat /etc/group | grep -e "^zplug:" > /dev/null 2>&1; then
       groupadd -r zplug
   fi
   usermod -a -G zplug ${USERNAME}
-  mkdir -p $ZSHPLUG_PATH/{cache,log,repos}
+  mkdir -p $ZSHPLUG_ROOT/{cache,log,repos}
 
-  chown -R "root:zplug" $(dirname $ZSHPLUG_PATH)
-  chmod -R 775 $(dirname $ZSHPLUG_PATH)
+  chown -R "root:zplug" $(dirname $ZSHPLUG_ROOT)
+  chmod -R 775 $(dirname $ZSHPLUG_ROOT)
 fi
 
 echo "Installing system-wide plugin manager for vim..."

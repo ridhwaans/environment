@@ -4,9 +4,9 @@
 
 export LANG=en_US.UTF-8
 
-export ZPLUG_PATH="/usr/local/share/zsh/bundle"
+export ZPLUG_ROOT="/usr/local/share/zsh/bundle"
 
-source $ZPLUG_PATH/init.zsh
+source $ZPLUG_ROOT/init.zsh
 
 export ZPLUG_HOME="$HOME/zsh/bundle"
 
