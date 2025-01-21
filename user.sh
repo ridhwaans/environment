@@ -12,6 +12,7 @@ USER_UID="${USERUID:-"automatic"}"
 USER_GID="${USERGID:-"automatic"}"
 
 # If in automatic mode, determine if a user already exists, if not use vscode
+# Set existing user as USERNAME. Requires ADJUSTED_ID
 if [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
   USERNAME=""
   if [ "$ADJUSTED_ID" = "mac" ]; then
