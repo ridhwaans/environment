@@ -80,7 +80,7 @@ else
   getent passwd $USERNAME | awk -F: '{ print $7 }'
 fi
 
-echo "debugging username, uid, gid, shell"
+echo "confirming username, uid, gid, shell"
 cat /etc/passwd
 
 echo "elapsed=$elapsed" > .report

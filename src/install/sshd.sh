@@ -91,3 +91,5 @@ if [ "${EMIT_PASSWORD}" = "true" ]; then
 fi
 
 echo -e "\nForward port ${SSHD_PORT} to your local machine and run:\n\n  ssh -p ${SSHD_PORT} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o GlobalKnownHostsFile=/dev/null ${USERNAME}@localhost\n"
+
+echo "Done!"

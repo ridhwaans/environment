@@ -30,9 +30,9 @@ for module in "${modules[@]}"; do
     exit_status=$?
 
     if [ $exit_status -eq 0 ]; then
-        echo "($cur/$total) Module '$module' executed successfully."
+        echo "($cur/$total) Module '$module' completed successfully."
     else
-        echo "Error: ($cur/$total) Module '$module' failed to execute with status $exit_status."
+        echo "Error: ($cur/$total) Module '$module' failed to complete with status $exit_status."
         exit 1
     fi
     ((cur++))

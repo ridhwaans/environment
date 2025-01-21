@@ -80,3 +80,5 @@ case "${ADJUSTED_ID}" in
         install_mac_packages
         ;;
 esac
+
+echo "Done!"

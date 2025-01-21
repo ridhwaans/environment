@@ -8,7 +8,7 @@ export ZPLUG_PATH="/usr/local/share/zsh/bundle"
 
 source $ZPLUG_PATH/init.zsh
 
-export ZPLUG_HOME="~/.zsh/bundle"
+export ZPLUG_HOME="$HOME/zsh/bundle"
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "

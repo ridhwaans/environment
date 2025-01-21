@@ -16,6 +16,7 @@ install_mac_packages() {
       tmux
     )
     run_brew_command_as_target_user install "${packages[@]}"
+    echo "Done!"
     exit 0
 }
 
