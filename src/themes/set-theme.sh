@@ -133,6 +133,18 @@ EOD
   # Tmux
 
   conditional_sed -i "s/^set -g @theme_name .*/set -g @theme_name \"$theme\"/" $HOME/.tmux.conf
+
+  # Vim
+
+  source $ENVIRONMENT_DIR/src/themes/$theme/vim.sh
+
+  conditional_sed -i "s/^Plug .*/Plug \"$VIMPLUG_THEME\"/" $HOME/.vimrc
+
+  conditional_sed -i "s/^colorscheme .*/colorscheme \"$VIM_THEME_NAME\"/" $HOME/.vimrc
+
+  conditional_sed -i "s/^let g:airline_theme=.*/let g:airline_theme=\"$VIM_THEME_NAME\"/" $HOME/.vimrc
+
+  vim +silent! +PlugInstall +PlugClean +qall
 }
 
 export -f set_theme
