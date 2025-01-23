@@ -13,12 +13,14 @@ set laststatus=2    " display status line
 
 " vim-plug
 let g:vim_plug_home = '/usr/local/share/vim/bundle'
+let g:vim_plug_colorscheme = "whatyouhide/vim-gotham"
+let g:colorscheme = "gotham256"
 
 execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
 
 call plug#begin(g:vim_plug_home . '/plugged')
 
-Plug 'whatyouhide/vim-gotham'
+Plug g:vim_plug_colorscheme
 
 call plug#end()
 
@@ -31,10 +33,11 @@ nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
 
 try
-  colorscheme gotham256
+  execute 'colorscheme ' . g:colorscheme
 catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme default
   set background=dark
 endtry
 
-let g:airline_theme='gotham256'
+" vim-airline status bar theme
+let g:airline_theme = g:colorscheme

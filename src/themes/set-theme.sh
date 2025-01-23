@@ -138,11 +138,9 @@ EOD
 
   source $ENVIRONMENT_DIR/src/themes/$theme/vim.sh
 
-  conditional_sed -i "s/^Plug .*/Plug \"$VIMPLUG_THEME\"/" $HOME/.vimrc
+  conditional_sed -i "s|^let g:vim_plug_colorscheme = \".*\"|let g:vim_plug_colorscheme = \"$VIMPLUG_COLORSCHEME\"|" $HOME/.vimrc
 
-  conditional_sed -i "s/^colorscheme .*/colorscheme \"$VIM_THEME_NAME\"/" $HOME/.vimrc
-
-  conditional_sed -i "s/^let g:airline_theme=.*/let g:airline_theme=\"$VIM_THEME_NAME\"/" $HOME/.vimrc
+  conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" $HOME/.vimrc
 
   vim +silent! +PlugInstall +PlugClean +qall
 }
