@@ -1,10 +1,16 @@
 #!/bin/bash
 
 function theme_help() {
-  echo "Usage: $(basename "$0") [OPTIONS]"
-  echo "Themes:"
-  echo "  Gotham"
-  echo "  help   Show this help message"
+  cat <<EOF
+Usage: env [OPTIONS]
+
+Themes:
+  Gotham
+
+Options:
+  -n, --name     Specify the theme name
+  help           Show this help message
+EOF
 }
 
 if [[ "$#" -lt 1 ]]; then
@@ -12,17 +18,36 @@ if [[ "$#" -lt 1 ]]; then
   exit 1
 fi
 
-case "$1" in
- Gotham)
-    set_theme "Gotham" "gotham"
-    echo "Theme set to: $1"
-    ;;
-  help)
-    theme_help
-    exit 0
-    ;;
-  *)
-    echo "Error: Unknown theme '$1'. Available themes: Gotham."
-    exit 1
-    ;;
-esac
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -n|--name)
+      if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+        case "$2" in
+          Gotham)
+            set_theme "Gotham" "gotham"
+            ;;
+          *)
+            echo "Error: Unknown theme '$2'. Available themes: Gotham."
+            exit 1
+            ;;
+        esac
+        shift 2
+      else
+        echo "Error: Missing value for --name"
+        exit 1
+      fi
+      ;;
+    help)
+      theme_help
+      exit 0
+      ;;
+    -*|--*)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+    *)
+      echo "Unknown argument: $1"
+      exit 1
+      ;;
+  esac
+done

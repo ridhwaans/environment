@@ -4,12 +4,15 @@ source $ENVIRONMENT_DIR/src/fonts/set-font.sh
 source $ENVIRONMENT_DIR/src/themes/set-theme.sh
 
 function show_help() {
-  echo "Usage: $(basename "$0") [COMMAND] [OPTIONS]"
-  echo "Commands:"
-  echo "  update               Get the newest changes if there are any"
-  echo "  font                 Font management (use 'font help' for details)"
-  echo "  theme                Theme management (use 'theme help' for details)"
-  echo "  help                 Show this help message"
+  cat <<EOF
+Usage: $(basename "$0") [COMMAND] [OPTIONS]
+
+Commands:
+  update               Get the newest changes if there are any
+  font                 Font management (use 'font help' for details)
+  theme                Theme management (use 'theme help' for details)
+  help                 Show this help message
+EOF
 }
 
 # Main

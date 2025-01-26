@@ -1,10 +1,16 @@
 #!/bin/bash
 
 function font_help() {
-  echo "Usage: $(basename "$0") [OPTIONS]"
-  echo "Options:"
-  echo "  -n, --name     Specify the font name"
-  echo "  help           Show this help message"
+  cat <<EOF
+Usage: env [OPTIONS]
+
+Fonts:
+  Roboto Mono
+
+Options:
+  -n, --name     Specify the font name
+  help           Show this help message
+EOF
 }
 
 if [[ "$#" -lt 1 ]]; then
@@ -21,7 +27,7 @@ while [[ "$#" -gt 0 ]]; do
             set_font "RobotoMonoForPowerline-Regular" "Roboto Mono for Powerline.ttf" "https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20for%20Powerline.ttf"
             ;;
           *)
-            echo "Error: Unknown font '$2'. Available fonts: Roboto Mono"
+            echo "Error: Unknown font '$2'. Available fonts: 'Roboto Mono'"
             exit 1
             ;;
         esac
