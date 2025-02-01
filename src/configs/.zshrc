@@ -53,9 +53,8 @@ function tmux_attach_or_switch_last() {
 }
 
 function tmux_default_sessions() {
-  # List of directories for each session
-  # dont use ~ since it does not work with -d or tmux commands
-  local sessions=(
+  # Don't use ~ since it may not work with -d or tmux commands.
+  local directories=(
     "$HOME"
     "$HOME/Source/environment/devcontainer-features"
     "$HOME/Source/environment/dotfiles"
@@ -64,39 +63,47 @@ function tmux_default_sessions() {
     "$HOME/Source/test"
   )
 
-  # Check if tmux is already running
-  if ! tmux has-session 2>/dev/null; then
-    # tmux is not running, create and start sessions
+  # Filter out directories that do not exist.
+  directories=($(for dir in "${directories[@]}"; do
+      [[ -d "$dir" ]] && echo "$dir"
+  done))
 
-    # Loop through each session
-    for session in "${sessions[@]}"; do
-      # Check if the starting directory exists
-      if [[ ! -d "$session" ]]; then
-        echo "Directory $session does not exist. Skipping session."
+  # Create a session for each directory, but only if it doesn't already exist
+  # or if it exists but points to a different working directory.
+  for directory in "${directories[@]}"; do
+    local session_name
+    session_name=$(basename "$directory")
+    
+    # Check if the session exists
+    if tmux has-session -t "$session_name" 2>/dev/null; then
+      # Get the current working directory of the first pane of the session.
+      local existing_dir
+      existing_dir=$(tmux display-message -p -t "${session_name}:0.0" "#{pane_current_path}")
+      
+      if [ "$existing_dir" = "$directory" ]; then
+        # The session already exists and points to the same directory.
+        continue
+      else
+        # The session exists but its working directory is different.
+        # Here you can choose to warn, rename, or take another action.
+        # For now, we'll just skip creating a duplicate.
         continue
       fi
-      local session_name=$(basename "$session")
+    fi
 
-      echo "Session name: $session_name"
-      echo "Starting directory: $session"
+    tmux new-session -d -s "$session_name" -c "$directory"
+  done
 
-      # Check if the tmux session name exists
-      if tmux has-session -t "$session_name" 2>/dev/null; then
-        echo "Session name $session_name already exists. Skipping session."
-        continue
-      fi
+  # dont use [-1] because bash doesnt reliably negative index like zsh
+  local last_directory="${directories[@]: -1}"
+  local last_session
+  last_session=$(basename "$last_directory")
 
-      # Create a new session in detached mode with a starting directory
-      tmux new-session -d -s "$session_name" -c "$session"
-    done
-  fi
-
-  # If we are inside tmux, switch to the last session in the list
+  # If inside tmux, switch to the last session; if outside, attach to it.
   if [ -n "$TMUX" ]; then
-    tmux switch-client -t "$(basename "${sessions[-1]}")"
+    tmux switch-client -t "$last_session"
   else
-    # Attach to the last session if outside tmux
-    tmux attach-session -t "$(basename "${sessions[-1]}")"
+    tmux attach-session -t "$last_session"
   fi
 }
 
