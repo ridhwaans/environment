@@ -28,9 +28,30 @@ map <F1> :set nonumber!<CR>
 map <F2> :NERDTreeToggle<CR>
 map <F3> :AirlineToggle<CR>
 
-" jump half-page up/down and cursor middle
+let g:mapleader=' '
+" jump half-page up/down with cursor in middle-of-page
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
+" edit vimrc
+nnoremap evi :e $MYVIMRC<CR>
+" reload vimrc
+nnoremap rvi :source $VIMRC<CR>
+
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
+nnoremap <leader>5 5gt
+
+nnoremap th  :tabfirst<CR>
+nnoremap tk  :tabnext<CR>
+nnoremap tj  :tabprev<CR>
+nnoremap tl  :tablast<CR>
+nnoremap tt  :tabedit<Space>
+nnoremap tn  :tabnext<Space>
+nnoremap tm  :tabm<Space>
+nnoremap td  :tabclose<CR>
+nnoremap tn  :tabnew<CR>
 
 try
   execute 'colorscheme ' . g:colorscheme
