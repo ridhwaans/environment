@@ -32,10 +32,10 @@ let g:mapleader=' '
 " jump half-page up/down with cursor in middle-of-page
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
-" edit vimrc
-nnoremap evi :e $MYVIMRC<CR>
+" edit vimrc in a new tab
+nnoremap evi :tabedit $MYVIMRC<CR>
 " reload vimrc
-nnoremap rvi :source $VIMRC<CR>
+nnoremap rvi :source $MYVIMRC<CR>
 
 nnoremap <leader>1 1gt
 nnoremap <leader>2 2gt
