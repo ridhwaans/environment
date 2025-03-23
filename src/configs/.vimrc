@@ -29,20 +29,25 @@ map <F2> :NERDTreeToggle<CR>
 map <F3> :AirlineToggle<CR>
 
 let g:mapleader=' '
+
+nnoremap <leader>w :w<CR> 
+nnoremap <leader>q :q<CR>
+
 " jump half-page up/down with cursor in middle-of-page
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
+
 " edit vimrc in a new tab
 nnoremap evi :tabedit $MYVIMRC<CR>
 " reload vimrc
 nnoremap rvi :source $MYVIMRC<CR>
-
+" goto tab by index
 nnoremap <leader>1 1gt
 nnoremap <leader>2 2gt
 nnoremap <leader>3 3gt
 nnoremap <leader>4 4gt
 nnoremap <leader>5 5gt
-
+" tabs
 nnoremap th  :tabfirst<CR>
 nnoremap tk  :tabnext<CR>
 nnoremap tj  :tabprev<CR>
@@ -52,6 +57,19 @@ nnoremap tn  :tabnext<Space>
 nnoremap tm  :tabm<Space>
 nnoremap td  :tabclose<CR>
 nnoremap tn  :tabnew<CR>
+" panes
+nnoremap <leader>h <C-w>h
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
+nnoremap <leader>sv :vsplit<CR>
+nnoremap <leader>sh :split<CR>
+
+" add a new buffer
+nnoremap <leader>sn<left>  :topleft  vnew<CR>
+nnoremap <leader>sn<right> :botright vnew<CR>
+nnoremap <leader>sn<up>    :topleft  new<CR>
+nnoremap <leader>sn<down>  :botright new<CR>
 
 try
   execute 'colorscheme ' . g:colorscheme
