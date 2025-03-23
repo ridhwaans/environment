@@ -282,5 +282,7 @@ setopt APPEND_HISTORY # append to Zsh history instead of overwriting
 setopt HIST_IGNORE_DUPS # prevent duplicate commands in Zsh history
 setopt HIST_IGNORE_SPACE # prevent commands starting with whitespace in Zsh history
 
+bindkey '^R' history-incremental-search-backward # enable reverse-i-search in tmux
+
 # start or attach to tmux default sessions
 tds
