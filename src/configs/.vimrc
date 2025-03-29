@@ -5,10 +5,11 @@ set softtabstop=4   " number of spaces in tab when editing
 set expandtab       " tabs are spaces
 set cursorline      " highlight current line
 set incsearch       " search as characters are entered
-set hlsearch        " highlight matches
+set hlsearch        " highlight search matches
 set lazyredraw      " redraw only when we need to.
 set showmatch       " highlight matching [{()}]
-set number          " show line numbers
+set number          " show current line number
+set relativenumber  " show relative line numbers
 set laststatus=2    " display status line
 
 " vim-plug
