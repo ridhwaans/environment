@@ -22,18 +22,33 @@ execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
 call plug#begin(g:vim_plug_home . '/plugged')
 
 Plug g:vim_plug_colorscheme
+" Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
-map <F1> :set nonumber!<CR>
+function! ToggleLineNumbers()
+    if &relativenumber
+        set norelativenumber
+        set number
+    else
+        set relativenumber
+        set number
+    endif
+endfunction
+
+map <F5> :call ToggleLineNumbers()<CR>
+map <F4> set nonumber!<CR>
 map <F2> :NERDTreeToggle<CR>
 map <F3> :AirlineToggle<CR>
 
-let g:mapleader=' '
+let g:mapleader=' ' " \ by default
 
 nnoremap <leader>w :w<CR> 
 nnoremap <leader>q :q<CR>
 
+" yanking to and pasting from system clipboard
+noremap <leader>y "+y
+noremap <leader>p "+p
 " jump half-page up/down with cursor in middle-of-page
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
@@ -49,22 +64,23 @@ nnoremap <leader>3 3gt
 nnoremap <leader>4 4gt
 nnoremap <leader>5 5gt
 " tabs
+nnoremap tn  :tabnew<CR>
+nnoremap tt  :tabedit<Space>
+nnoremap td  :tabclose<CR>
 nnoremap th  :tabfirst<CR>
 nnoremap tk  :tabnext<CR>
 nnoremap tj  :tabprev<CR>
 nnoremap tl  :tablast<CR>
-nnoremap tt  :tabedit<Space>
 nnoremap tn  :tabnext<Space>
-nnoremap tm  :tabm<Space>
-nnoremap td  :tabclose<CR>
-nnoremap tn  :tabnew<CR>
+nnoremap tm  :tabmove<Space>
+
 " panes
+nnoremap <leader>sv :vsplit<CR>
+nnoremap <leader>sh :split<CR>
 nnoremap <leader>h <C-w>h
 nnoremap <leader>j <C-w>j
 nnoremap <leader>k <C-w>k
 nnoremap <leader>l <C-w>l
-nnoremap <leader>sv :vsplit<CR>
-nnoremap <leader>sh :split<CR>
 
 " add a new buffer
 nnoremap <leader>sn<left>  :topleft  vnew<CR>
