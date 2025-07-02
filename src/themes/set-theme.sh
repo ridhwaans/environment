@@ -145,6 +145,10 @@ EOD
   conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" $HOME/.vimrc
 
   vim +silent! +PlugInstall +PlugClean +qall
+
+  # Neovim
+
+  cp $ENVIRONMENT_DIR/src/themes/$theme/neovim.lua $HOME/.config/nvim/lua/plugins/theme.lua
 }
 
 export -f set_theme

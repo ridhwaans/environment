@@ -26,7 +26,7 @@ Plug g:vim_plug_colorscheme
 
 call plug#end()
 
-function! ToggleLineNumbers()
+function! ToggleRelativeLineNumbers()
     if &relativenumber
         set norelativenumber
         set number
@@ -36,14 +36,14 @@ function! ToggleLineNumbers()
     endif
 endfunction
 
-map <F5> :call ToggleLineNumbers()<CR>
-map <F4> set nonumber!<CR>
-map <F2> :NERDTreeToggle<CR>
-map <F3> :AirlineToggle<CR>
+map <F2> set nonumber!<CR>
+map <F3> :call ToggleRelativeLineNumbers()<CR>
+map <F4> :NERDTreeToggle<CR>
+map <F5> :AirlineToggle<CR>
 
 let g:mapleader=' ' " \ by default
 
-nnoremap <leader>w :w<CR> 
+nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 
 " yanking to and pasting from system clipboard

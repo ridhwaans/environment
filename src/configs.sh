@@ -73,6 +73,8 @@ for config in "${configs[@]}"; do
 	cp "$SCRIPT_ROOT/configs/$config" "$HOME/" && echo "Copied $SCRIPT_ROOT/configs/$config to $HOME/"
 done;
 
+cp -r "$SCRIPT_ROOT/configs/nvim" "$HOME/.config/nvim" && echo "Copied $SCRIPT_ROOT/configs/nvim to $HOME/.config/nvim"
+
 if [ -n "$WINDOWS_HOME" ]; then
   echo "(wsl)"
   ln -sf $HOME $WINDOWS_HOME/$(basename $HOME)

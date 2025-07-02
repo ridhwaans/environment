@@ -8,6 +8,7 @@ echo "SCRIPT_ROOT: $SCRIPT_ROOT"
 
 modules=(
   common-utils.sh
+  neovim.sh
   tmux.sh
   java.sh
   python.sh
