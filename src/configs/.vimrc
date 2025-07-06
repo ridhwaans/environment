@@ -22,9 +22,14 @@ execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
 call plug#begin(g:vim_plug_home . '/plugged')
 
 Plug g:vim_plug_colorscheme
+Plug 'machakann/vim-highlightedyank'
 " Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
+
+function! ToggleLineNumbers()
+        set nonumber!
+endfunction
 
 function! ToggleRelativeLineNumbers()
     if &relativenumber
@@ -36,7 +41,7 @@ function! ToggleRelativeLineNumbers()
     endif
 endfunction
 
-map <F2> set nonumber!<CR>
+map <F2> :call ToggleLineNumbers()<CR>
 map <F3> :call ToggleRelativeLineNumbers()<CR>
 map <F4> :NERDTreeToggle<CR>
 map <F5> :AirlineToggle<CR>
