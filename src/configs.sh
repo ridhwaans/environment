@@ -69,11 +69,14 @@ configs=(
 	.zshrc
 )
 for config in "${configs[@]}"; do
-  [ -L "$HOME/$config" ] && rm "$HOME/$config" && echo "Symlink found and removed at $HOME/$config"
+  if [ -e "$HOME/$config" ]; then
+    rm -rf "$HOME/$config"
+    echo "Removed existing item at $HOME/$config"
+  fi
 	cp "$SCRIPT_ROOT/configs/$config" "$HOME/" && echo "Copied $SCRIPT_ROOT/configs/$config to $HOME/"
 done;
 
-cp -r "$SCRIPT_ROOT/configs/nvim" "$HOME/.config/nvim" && echo "Copied $SCRIPT_ROOT/configs/nvim to $HOME/.config/nvim"
+rm -rf "$HOME/.config/nvim" && cp -r "$SCRIPT_ROOT/configs/nvim" "$HOME/.config/nvim" && echo "Copied $SCRIPT_ROOT/configs/nvim to $HOME/.config/nvim"
 
 if [ -n "$WINDOWS_HOME" ]; then
   echo "(wsl)"

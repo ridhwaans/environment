@@ -2,6 +2,15 @@
 
 set -e
 
+conditional_sed() {
+    # use gnu sed for no explicit backup in-place editing on mac
+    if [ $(uname) = Darwin ]; then
+        gsed "$@"
+    else
+        sed "$@"
+    fi
+}
+
 set_font() {
   local profile_font_name=$1
 	local file=$2
@@ -63,9 +72,8 @@ set_font() {
     fi
 
     echo "$VSCODE_USER_SETTINGS_DIR"/settings.json
-    # use GNU sed -i for in-place editing and no backup requirement
-    gsed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$base_name\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
-    gsed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$base_name\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
+    conditional_sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$base_name\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
+    conditional_sed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$base_name\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
   fi
 
   # Windows Terminal
@@ -74,7 +82,7 @@ set_font() {
       echo "(wsl)"
 
       WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-      WINDOWS_TERMINAL_SETTINGS_DIR=$WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState
+      WINDOWS_TERMINAL_SETTINGS_DIR=$(echo $WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState)
 
       jq --arg base_name "$base_name" '.profiles.list |= map(if .source == "Windows.Terminal.Wsl" then .font.face = $base_name else . end)' \
       "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json \

@@ -147,8 +147,8 @@ EOD
   vim +silent! +PlugInstall +PlugClean +qall
 
   # Neovim
-
-  cp $ENVIRONMENT_DIR/src/themes/$theme/neovim.lua $HOME/.config/nvim/lua/plugins/theme.lua
+  NEOVIM_USER_PLUGINS_DIR=$HOME/.config/nvim/lua/plugins
+  mkdir -p $NEOVIM_USER_PLUGINS_DIR && cp -f $ENVIRONMENT_DIR/src/themes/$theme/neovim.lua $NEOVIM_USER_PLUGINS_DIR/theme.lua
 }
 
 export -f set_theme
