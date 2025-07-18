@@ -84,10 +84,10 @@ fi
 echo "confirming username, uid, gid, shell"
 cat /etc/passwd
 
-echo "elapsed=$elapsed" > .report
-echo "ADJUSTED_ID=$ADJUSTED_ID" >> .report
-echo "TARGET_USERNAME=$USERNAME" >> .report
-echo "TARGET_UID=$UID" >> .report
-echo "TARGET_GID=$GID" >> .report
+echo "elapsed=$elapsed" > /tmp/.environment
+echo "ADJUSTED_ID=$ADJUSTED_ID" >> /tmp/.environment
+echo "TARGET_USERNAME=$USERNAME" >> /tmp/.environment
+echo "TARGET_UID=$UID" >> /tmp/.environment
+echo "TARGET_GID=$GID" >> /tmp/.environment
 
-cat .report
+cat /tmp/.environment

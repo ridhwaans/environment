@@ -23,9 +23,10 @@ docker run -w /root -it --rm debian sh -uelic '
   apt update -y
   apt install -y --no-install-recommends ca-certificates curl git sudo zsh
   curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/user.sh | bash
-  sudo -u vscode touch /home/vscode/.zshrc
-  sudo -u vscode -i zsh -c "
+  TARGET_USERNAME=$(grep '^TARGET_USERNAME=' /tmp/.environment | cut -d '=' -f2-)
+  sudo -u $TARGET_USERNAME touch /home/$TARGET_USERNAME/.zshrc
+  sudo -u $TARGET_USERNAME -i zsh -c "
     curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/boot.sh | bash
-  " && sudo -u vscode -i zsh
+  " && sudo -u $TARGET_USERNAME -i zsh
 '
 ```
