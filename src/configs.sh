@@ -64,7 +64,6 @@ fi
 echo "(3/3) Setting up home files & permissions..."
 configs=(
 	.gitconfig
-  .tmux.conf
 	.vimrc
 	.zshrc
 )
@@ -95,6 +94,8 @@ mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwa
 
 # Moving to end because it lapses trailing code
 vim +silent! +PlugInstall +PlugClean +qall
+
+nvim --headless "+Lazy! sync" +qa
 
 echo "Done!"
 

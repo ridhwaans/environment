@@ -1,45 +1,7 @@
 #!/usr/bin/env bash
 
-updaterc() {
-  rc_paths=("vim" "$(eval echo "~$USERNAME")/.vimrc"
-          "bash" "$(eval echo "~$USERNAME")/.profile"
-          "zsh" "$(eval echo "~$USERNAME")/.zshrc"
-          "tmux" "$(eval echo "~$USERNAME")/.tmux.conf")
-
-  get_value_by_key() {
-    local key="$1"
-    local index
-    for ((index = 0; index < ${#rc_paths[@]}; index+=2)); do
-        if [[ "${rc_paths[index]}" == "$key" ]]; then
-            echo "${rc_paths[index+1]}"
-            return 0
-        fi
-    done
-    return 1
-  }
-
-  local rc_key=$1
-  local rc_content=$2
-
-  rc_path=$(get_value_by_key "$rc_key")
-  rc_dir=$(dirname "$rc_path")
-  [ ! -d "$rc_dir" ] && mkdir -p "$rc_dir"
-  [ ! -f "$rc_path" ] && touch "$rc_path"
-  if [ "$ADJUSTED_ID" != "mac" ]; then
-     [ "$(stat -c '%U:%G' "$rc_path")" != "$USERNAME:$USERNAME" ] && chown $USERNAME:$USERNAME $rc_path
-  else
-     [ "$(stat -f '%Su:%Sg' "$rc_path")" != "$USERNAME:staff" ] && chown $USERNAME:staff $rc_path
-  fi
-  if [[ "$(cat $rc_path)" = *"$rc_content"* ]]; then
-    echo "Content already exists in $rc_path"
-  else
-    echo "Updating $rc_path..."
-    echo -e "$rc_content" >> "$rc_path"
-  fi
-}
-
 run_brew_command_as_target_user() {
-    # workaround for issue running brew as root
+    # workaround for issue running brew as root https://github.com/orgs/Homebrew/discussions/2771
     eval "$(/opt/homebrew/bin/brew shellenv)" && sudo -u $USERNAME brew "$@"
 }
 
@@ -89,7 +51,6 @@ find_version_from_git_tags() {
     echo "${variable_name}=${!variable_name}"
 }
 
-export -f updaterc
 export -f find_version_from_git_tags
 export -f run_brew_command_as_target_user
 export -f conditional_grep

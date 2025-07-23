@@ -8,16 +8,7 @@ echo "SCRIPT_ROOT: $SCRIPT_ROOT"
 
 modules=(
   common-utils.sh
-  neovim.sh
-  tmux.sh
-  java.sh
-  python.sh
-  ruby.sh
-  node.sh
-  go.sh
   tools.sh
-  sshd.sh
-  apps.sh
 )
 total=${#modules[@]}
 cur=1

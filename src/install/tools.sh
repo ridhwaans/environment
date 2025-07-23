@@ -7,24 +7,28 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-EXERCISM_VERSION="${EXERCISMVERSION:-"latest"}"
-TERRAFORM_VERSION="${TERRAFORMVERSION:-"latest"}"
-
 if [ "$ADJUSTED_ID" = "mac" ]; then
   run_brew_command_as_target_user tap aws/tap
   run_brew_command_as_target_user tap hashicorp/tap
   run_brew_command_as_target_user upgrade
 
   packages=(
+    gh
 		awscli
     aws-sam-cli
     cfn-lint
-    exercism
-    gh
     hashicorp/tap/terraform
+    exercism
 	)
 	run_brew_command_as_target_user install "${packages[@]}"
 else
+  # Install gh-cli
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+  chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+  apt update
+  apt install -y --no-install-recommends gh
+
   # Install AWS CLI
   if command -v aws &> /dev/null; then
     echo "aws is installed. Version: $(aws --version)"
@@ -48,39 +52,51 @@ else
   fi
 
   # Install cfn-lint
-  PYENV_ROOT="${PYENVPATH:-"/usr/local/pyenv"}"
-  su ${USERNAME} -c "export PYENV_ROOT=${PYENV_ROOT}; export PATH=$PYENV_ROOT/bin:\$PATH; pyenv exec pip install -U cfn-lint"
+  export PATH="$PATH:/usr/local/share/mise/shims"
+  # python3 -m pip install -U cfn-lint
+
+  # Install terraform
+  apt install -y --no-install-recommends gpg lsb-release
+  wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+  apt update
+  apt install -y --no-install-recommends terraform
 
   # Install exercism-cli
+  EXERCISM_VERSION="${EXERCISMVERSION:-"latest"}"
   if command -v exercism &> /dev/null; then
       echo "exercism is installed. Version: $(exercism version)"
   else
     find_version_from_git_tags EXERCISM_VERSION https://github.com/exercism/cli
-    exercism_filename="exercism-${EXERCISM_VERSION}-linux-x86_64.tar.gz"
+    case $(uname -m) in
+      "x86_64"|"aarch64")
+          arch="x86_64"
+          ;;
+      "arm64")
+          arch="arm64"
+          ;;
+      *)
+          echo "Unsupported cpu arch: $(uname -m)"
+          exit 1
+          ;;
+    esac
+
+    case $(uname -s) in
+      "Linux")
+          sys="linux"
+          ;;
+      "Darwin")
+          sys="darwin"
+          ;;
+      *)
+          echo "Unsupported system: $(uname -s)"
+          exit 1
+          ;;
+    esac
+    exercism_filename="exercism-${EXERCISM_VERSION}-${sys}-${arch}.tar.gz"
     curl -L https://github.com/exercism/cli/releases/download/v${EXERCISM_VERSION}/${exercism_filename} --create-dirs -o /tmp/${exercism_filename}
     tar -xzvf /tmp/${exercism_filename} -C /usr/local/bin exercism
     rm -rf /tmp/${exercism_filename}
-  fi
-
-  # Install gh-cli
-  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-  chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-  apt update
-  apt install -y --no-install-recommends gh
-
-  # Install terraform
-  if command -v terraform &> /dev/null; then
-      echo "terraform is installed. Version: $(terraform --version)"
-  else
-    # Verify requested version is available, convert latest
-    find_version_from_git_tags TERRAFORM_VERSION 'https://github.com/hashicorp/terraform'
-
-    terraform_filename="terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
-    curl -sSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/${terraform_filename}" -o /tmp/${terraform_filename} && cd $(dirname $_)
-    unzip ${terraform_filename}
-    mv -f terraform /usr/local/bin/
-    rm -rf ${terraform_filename}
   fi
 fi
 

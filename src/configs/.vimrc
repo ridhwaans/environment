@@ -23,7 +23,6 @@ call plug#begin(g:vim_plug_home . '/plugged')
 
 Plug g:vim_plug_colorscheme
 Plug 'machakann/vim-highlightedyank'
-" Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 

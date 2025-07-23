@@ -132,10 +132,6 @@ EOD
 
   conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" $HOME/.zshrc
 
-  # Tmux
-
-  conditional_sed -i "s/^set -g @theme_name .*/set -g @theme_name \"$theme\"/" $HOME/.tmux.conf
-
   # Vim
 
   source $ENVIRONMENT_DIR/src/themes/$theme/vim.sh
