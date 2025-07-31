@@ -87,7 +87,7 @@ cat /etc/passwd
 echo "elapsed=$elapsed" > /tmp/.environment
 echo "ADJUSTED_ID=$ADJUSTED_ID" >> /tmp/.environment
 echo "TARGET_USERNAME=$USERNAME" >> /tmp/.environment
-echo "TARGET_UID=$UID" >> /tmp/.environment
-echo "TARGET_GID=$GID" >> /tmp/.environment
+echo "TARGET_UID=$USER_UID" >> /tmp/.environment
+echo "TARGET_GID=$USER_GID" >> /tmp/.environment
 
 cat /tmp/.environment

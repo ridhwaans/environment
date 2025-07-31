@@ -1,0 +1,17 @@
+[tools]
+
+fastfetch = "latest"
+jq = "latest"
+
+bun = "latest"
+node = "latest"
+go = "latest"
+java = "openjdk-24"
+python = "latest"
+
+gh = "latest"
+pipx = "latest"
+aws-cli = "latest"
+aws-sam-cli = "latest"
+cfn-lint = "latest"
+terraform = "latest"

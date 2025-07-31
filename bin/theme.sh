@@ -2,7 +2,7 @@
 
 function theme_help() {
   cat <<EOF
-Usage: env [OPTIONS]
+Usage: dotenv [OPTIONS]
 
 Themes:
   Gotham

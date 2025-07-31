@@ -3,8 +3,8 @@
 
 git
 ```bash
-git clone -b test https://github.com/ridhwaans/environment.git $HOME/.local/share/environment
-source $HOME/.local/share/environment/install.sh
+git clone -b test https://github.com/ridhwaans/environment.git $HOME/Source/environment
+bash $HOME/Source/environment/install.sh
 ```
 
 wget
@@ -19,15 +19,15 @@ curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/te
 
 docker
 ```bash
-docker run -w /root -it --rm debian sh -uelic '
-  apt update -y
-  apt install -y --no-install-recommends ca-certificates curl git sudo zsh
-  curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/test/user.sh | bash
-  TARGET_USERNAME=$(grep '^TARGET_USERNAME=' /tmp/.environment | cut -d '=' -f2-)
-  sudo -u $TARGET_USERNAME touch /home/$TARGET_USERNAME/.zshrc
-  sudo -u $TARGET_USERNAME -i zsh -c "
-    curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/test/boot.sh | bash
-  " && sudo -u $TARGET_USERNAME -i zsh
+docker run -w /root -it --rm debian bash -c '
+  apt update -y &&
+  apt install -y --no-install-recommends ca-certificates curl git sudo zsh &&
+  curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/test/user.sh | bash &&
+  TARGET_USERNAME=$(grep "^TARGET_USERNAME=" /tmp/.environment | cut -d"=" -f2-) &&
+  sudo -u "$TARGET_USERNAME" bash -c "curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/test/boot.sh | bash" &&
+  exec sudo -u "$TARGET_USERNAME" env \
+  HOME="/home/$TARGET_USERNAME" \
+  ZDOTDIR="/home/$TARGET_USERNAME/.config/zsh" \
+  bash -c "cd \$HOME && exec zsh -l"
 '
-
 ```

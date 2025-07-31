@@ -51,6 +51,6 @@ find_version_from_git_tags() {
     echo "${variable_name}=${!variable_name}"
 }
 
-export -f find_version_from_git_tags
 export -f run_brew_command_as_target_user
 export -f conditional_grep
+export -f find_version_from_git_tags

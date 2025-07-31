@@ -2,7 +2,7 @@
 
 function font_help() {
   cat <<EOF
-Usage: env [OPTIONS]
+Usage: dotenv [OPTIONS]
 
 Fonts:
   Roboto Mono

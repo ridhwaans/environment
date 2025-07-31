@@ -17,6 +17,7 @@ EOF
 
 # Main
 if [[ "$#" -lt 1 ]]; then
+  cat "$ENVIRONMENT_DIR/bin/banner.txt"
   show_help
   exit 1
 fi

@@ -126,24 +126,24 @@ EOD
 
   # Shell
 
-  conditional_sed -i "s/^THEME_NAME=.*/THEME_NAME=\"$theme\"/" $HOME/.zshrc
+  conditional_sed -i "s/^THEME_NAME=.*/THEME_NAME=\"$theme\"/" $XDG_CONFIG_HOME/zsh/.zshrc
 
   # Prompt
 
-  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" $HOME/.zshrc
+  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" $XDG_CONFIG_HOME/zsh/.zshrc
 
   # Vim
 
   source $ENVIRONMENT_DIR/src/themes/$theme/vim.sh
 
-  conditional_sed -i "s|^let g:vim_plug_colorscheme = \".*\"|let g:vim_plug_colorscheme = \"$VIMPLUG_COLORSCHEME\"|" $HOME/.vimrc
+  conditional_sed -i "s|^let g:vim_plug_colorscheme = \".*\"|let g:vim_plug_colorscheme = \"$VIMPLUG_COLORSCHEME\"|" $XDG_CONFIG_HOME/vim/vimrc
 
-  conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" $HOME/.vimrc
+  conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" $XDG_CONFIG_HOME/vim/vimrc
 
-  vim +silent! +PlugInstall +PlugClean +qall
+  vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
 
   # Neovim
-  NEOVIM_USER_PLUGINS_DIR=$HOME/.config/nvim/lua/plugins
+  NEOVIM_USER_PLUGINS_DIR=$XDG_CONFIG_HOME/nvim/lua/plugins
   mkdir -p $NEOVIM_USER_PLUGINS_DIR && cp -f $ENVIRONMENT_DIR/src/themes/$theme/neovim.lua $NEOVIM_USER_PLUGINS_DIR/theme.lua
 }
 

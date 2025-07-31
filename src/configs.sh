@@ -2,16 +2,36 @@
 
 set -e
 
-SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
+remove_dest() {
+  dest="$1"
+  if [ -L "$dest" ] || [ -f "$dest" ]; then
+    rm -f "$dest"
+  elif [ -d "$dest" ]; then
+    rm -rf "$dest"
+  fi
+}
 
-echo "SCRIPT_ROOT is $SCRIPT_ROOT"
-echo "HOME is $HOME"
+copy_path() {
+  src="$1"
+  dest="$2"
 
-echo "(1/3) Setting up IDE..."
+  remove_dest "$dest"
+  mkdir -p "$(dirname "$dest")"
+
+  if [ -d "$src" ]; then
+    cp -r "$src" "$dest"
+  else
+    cp "$src" "$dest"
+  fi
+}
+
+echo "(1/4) Setting up IDE..."
 if command -v code &>/dev/null; then
+  code --extensions-dir "$XDG_DATA_HOME/code/extensions"
+
   while IFS= read -r extension || [ -n "$extension" ]; do
       code --install-extension "$extension"
-  done < "$SCRIPT_ROOT/configs/vscode/extensions"
+  done < "$CONFIGS_DIR/code/extensions/extensions"
   code --install-extension PKief.material-icon-theme
 fi
 
@@ -19,30 +39,30 @@ if [ $(uname) = Darwin ]; then
 	echo "(mac)"
 
 	VSCODE_USER_SETTINGS_DIR=$HOME/Library/Application\ Support/Code/User
-	mkdir -p "$VSCODE_USER_SETTINGS_DIR" && cp -f $SCRIPT_ROOT/configs/vscode/settings.json "$VSCODE_USER_SETTINGS_DIR"/settings.json
+  copy_path "$CONFIGS_DIR/code/user/settings.json" "$VSCODE_USER_SETTINGS_DIR/settings.json"
 
 elif [ $(uname) = Linux ]; then
 	if [ -n "$WSL_DISTRO_NAME" ]; then
 		echo "(wsl)"
 
     WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
+    VSCODE_USER_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
 
-		VSCODE_USER_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
-		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_ROOT/configs/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
-		# https://github.com/microsoft/vscode/issues/1022
+    # https://github.com/microsoft/vscode/issues/1022
 		# https://github.com/microsoft/vscode/issues/166680
+    copy_path "$CONFIGS_DIR/code/user/settings.json" "$VSCODE_USER_SETTINGS_DIR/settings.json"
 
 	elif [ -n "$CODESPACES" ]; then
 		echo "(github codespaces)"
 	else
 		echo "(native linux)"
 
-		VSCODE_USER_SETTINGS_DIR=$HOME/.config/Code/User
-		mkdir -p $VSCODE_USER_SETTINGS_DIR && cp -f $SCRIPT_ROOT/configs/vscode/settings.json $VSCODE_USER_SETTINGS_DIR/settings.json
+  copy_path "$CONFIGS_DIR/code/user/settings.json" "$XDG_CONFIG_HOME/code/user/settings.json"
+
 	fi
 fi
 
-echo "(2/3) Setting up terminal emulator..."
+echo "(2/4) Setting up terminal emulator..."
 if [ $(uname) = Darwin ]; then
 	echo "(mac)"
 
@@ -51,8 +71,9 @@ elif [ $(uname) = Linux ]; then
 		echo "(wsl)"
 
 		WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-    # Windows Terminal
-		cp "$SCRIPT_ROOT/configs/windowsterminal/settings.json" ${WINDOWS_HOME}/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState/settings.json
+    TERMINAL_USER_SETTINGS_DIR="$WINDOWS_HOME/AppData/Local/Packages"/Microsoft.WindowsTerminal*/LocalState
+
+    copy_path "$CONFIGS_DIR/windowsterminal/settings.json" "$TERMINAL_USER_SETTINGS_DIR/settings.json"
 
 	elif [ -n "$CODESPACES" ]; then
 		echo "(github codespaces)"
@@ -61,26 +82,19 @@ elif [ $(uname) = Linux ]; then
 	fi
 fi
 
-echo "(3/3) Setting up home files & permissions..."
-configs=(
-	.gitconfig
-	.vimrc
-	.zshrc
-)
-for config in "${configs[@]}"; do
-  if [ -e "$HOME/$config" ]; then
-    rm -rf "$HOME/$config"
-    echo "Removed existing item at $HOME/$config"
-  fi
-	cp "$SCRIPT_ROOT/configs/$config" "$HOME/" && echo "Copied $SCRIPT_ROOT/configs/$config to $HOME/"
-done;
+echo "(3/4) Setting up home files & permissions..."
 
-rm -rf "$HOME/.config/nvim" && cp -r "$SCRIPT_ROOT/configs/nvim" "$HOME/.config/nvim" && echo "Copied $SCRIPT_ROOT/configs/nvim to $HOME/.config/nvim"
+for entry in "$CONFIGS_DIR"/*; do
+  name=$(basename "$entry")
 
-if [ -n "$WINDOWS_HOME" ]; then
-  echo "(wsl)"
-  ln -sf $HOME $WINDOWS_HOME/$(basename $HOME)
-fi
+  # skip
+  case "$name" in
+    code|windowsterminal) continue ;;
+  esac
+
+  dest="$XDG_CONFIG_HOME/$name"
+  copy_path "$entry" "$dest"
+done
 
 if [ -z "$CODESPACES" ] && [ -d "$HOME/.ssh/" ]; then
     find $HOME/.ssh/ -type f -exec chmod 600 {} \;
@@ -88,16 +102,18 @@ if [ -z "$CODESPACES" ] && [ -d "$HOME/.ssh/" ]; then
     find $HOME/.ssh/ -type f -name "*.pub" -exec chmod 644 {} \;
 fi
 
+# rehome zsh
+echo 'export ZDOTDIR=$HOME/.config/zsh' > $HOME/.zshenv
+
 # gh auth login -h 'github.com' -p 'ssh' --skip-ssh-key -w
+
+echo "(4/4) Setting up Source directory..."
 # https://gist.github.com/ridhwaans/08f2fc5e9b3614a3154cef749a43a568
 mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwaans/08f2fc5e9b3614a3154cef749a43a568/raw/scripts.sh" -o "$HOME/Source/scripts.sh" && chmod +x "$HOME/Source/scripts.sh"
 
 # Moving to end because it lapses trailing code
-vim +silent! +PlugInstall +PlugClean +qall
+vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
 
 nvim --headless "+Lazy! sync" +qa
 
 echo "Done!"
-
-# Back to the original user
-exit $?

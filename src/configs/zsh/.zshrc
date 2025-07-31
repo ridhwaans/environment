@@ -1,14 +1,31 @@
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+
+export PATH="$XDG_BIN_HOME:$PATH"
+
+export ENVIRONMENT_DIR="$HOME/Source/environment"
+ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
+
+mise install
+
+eval "$(mise activate zsh)"
+
+export VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"
+
 # ***********
 # ** zplug **
 # ***********
 
-export LANG=en_US.UTF-8
+echo "ZPLUG_HOME is set to: $ZPLUG_HOME"
 
-export ZSHPLUG_ROOT="/usr/local/share/zsh/bundle"
+export ZPLUG_HOME="$XDG_DATA_HOME/zplug"
 
-source $ZSHPLUG_ROOT/init.zsh
+echo "ZPLUG_HOME is set to: $ZPLUG_HOME"
 
-export ZPLUG_HOME="$HOME/zsh/bundle"
+source $ZPLUG_HOME/init.zsh
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
@@ -18,14 +35,6 @@ if ! zplug check --verbose; then
 fi
 
 zplug load --verbose
-
-unset MISE_GLOBAL_CONFIG_FILE
-unset MISE_DATA_DIR
-
-eval "$(mise activate zsh)"
-export MISE_GLOBAL_CONFIG_FILE=/etc/mise/config.toml
-export MISE_DATA_DIR=/usr/local/share/mise
-
 
 # **********************
 # ** Helper functions **
@@ -76,13 +85,14 @@ fi
 # ** Aliases and home vars **
 # ***************************
 
-export HISTFILE="$HOME/.zsh_history"
-export EDITOR="/usr/bin/vim"
-export SUDO_EDITOR="$EDITOR"
+export LANG=en_US.UTF-8
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
+export EDITOR="/usr/local/bin/nvim"
+export SUDO_EDITOR="$EDITOR -u NORC"
 
 alias cds="cd $HOME/Source"
-alias evi="$EDITOR $HOME/.vimrc"
-alias ezsh="$EDITOR $HOME/.zshrc"
+alias evi="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"
+alias ezsh="$EDITOR $XDG_CONFIG_HOME/zsh/.zshrc"
 alias es="[ -f $HOME/Source/scripts.sh ] && $EDITOR $HOME/Source/scripts.sh"
 
 alias weather="curl http://v2.wttr.in"
@@ -93,9 +103,9 @@ if [ $(uname) = Darwin ]; then
   defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist Display -int 18
 
   defaults write com.apple.finder ShowPathbar -bool true
-  # Do not display prompt when quitting iTerm
+  # Don't display prompt when quitting iTerm
   defaults write com.googlecode.iterm2 PromptOnQuit -bool false
-  # Stop `Music.app` from opening
+  # Don't open `Music.app`
   launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist
 
   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/mysql/lib
@@ -112,21 +122,11 @@ if [ -n "$WSL_DISTRO_NAME" ]; then
 
   ln -sf $HOME $WINDOWS_HOME/$(basename $HOME)
 
-  export PATH=$PATH:/mnt/c/Program\ Files/Docker/Docker/resources/bin
+  export PATH=/mnt/c/Program\ Files/Docker/Docker/resources/bin:$PATH
 fi
 
 if [ -n "$CODESPACES" ]; then
 fi
-
-export PATH="$PATH:$HOME/bin"
-
-export PATH="$PATH:$HOME/.local/bin"
-
-export ENVIRONMENT_DIR="$HOME/.local/share/environment"
-
-export PATH="$PATH:$ENVIRONMENT_DIR/bin"
-
-THEME_DIR="$ENVIRONMENT_DIR/src/themes"
 
 # *****************
 # ** Shell theme **
@@ -134,7 +134,7 @@ THEME_DIR="$ENVIRONMENT_DIR/src/themes"
 
 THEME_NAME="gotham"
 
-THEME_FILE="$THEME_DIR/$THEME_NAME/theme.sh"
+THEME_FILE="$ENVIRONMENT_DIR/src/themes/$THEME_NAME/theme.sh"
 
 [[ -s $THEME_FILE ]] && source $THEME_FILE
 
@@ -144,12 +144,12 @@ THEME_FILE="$THEME_DIR/$THEME_NAME/theme.sh"
 
 PROMPT_THEME="agnoster"
 
-PROMPT_THEME_FILE="$THEME_DIR/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
+PROMPT_THEME_FILE="$ENVIRONMENT_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
 
 [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
 
-
-setopt promptsubst # enable command substitution in prompt (for shell prompt theme)
+setopt PROMPT_SUBST # enable command substitution in prompt (for shell prompt theme)
 setopt APPEND_HISTORY # append to Zsh history instead of overwriting
 setopt HIST_IGNORE_DUPS # prevent duplicate commands in Zsh history
 setopt HIST_IGNORE_SPACE # prevent commands starting with whitespace in Zsh history
+
