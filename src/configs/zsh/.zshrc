@@ -19,11 +19,7 @@ export VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"
 # ** zplug **
 # ***********
 
-echo "ZPLUG_HOME is set to: $ZPLUG_HOME"
-
 export ZPLUG_HOME="$XDG_DATA_HOME/zplug"
-
-echo "ZPLUG_HOME is set to: $ZPLUG_HOME"
 
 source $ZPLUG_HOME/init.zsh
 
@@ -149,7 +145,13 @@ PROMPT_THEME_FILE="$ENVIRONMENT_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-t
 [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
 
 setopt PROMPT_SUBST # enable command substitution in prompt (for shell prompt theme)
-setopt APPEND_HISTORY # append to Zsh history instead of overwriting
-setopt HIST_IGNORE_DUPS # prevent duplicate commands in Zsh history
-setopt HIST_IGNORE_SPACE # prevent commands starting with whitespace in Zsh history
 
+# *************
+# ** History **
+# *************
+
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
+
+export HISTSIZE=50000
+export SAVEHIST=10000
+setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_REDUCE_BLANKS EXTENDED_HISTORY

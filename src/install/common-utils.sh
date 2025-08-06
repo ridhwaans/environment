@@ -142,40 +142,49 @@ fi
 install_mac_apps() {
   brew install --cask beekeeper-studio brave-browser docker discord dropbox figma kap mounty notion postman steam visual-studio-code
 
-  [ ! -d "/Applications/Google Chrome.app" ] && brew install --cask google-chrome
   [ ! -d "/Applications/Slack.app" ] && brew install --cask slack
   [ ! -d "/Applications/zoom.us.app" ] && brew install --cask zoom
 
   brew cleanup
+  brew install dockutil
 
   # Set Dock items
   OLDIFS=$IFS
   IFS=''
 
   apps=(
-    'Terminal'
-    'Visual Studio Code'
-    'Brave Browser'
-    Notion
-    'Docker Desktop'
-    'Beekeeper Studio'
-    Postman
-    Slack
-    Figma
-    zoom.us
-    'System Settings'
+    "Terminal"
+    "Visual Studio Code"
+    "Brave Browser"
+    "Notion"
+    "Docker"
+    "Beekeeper Studio"
+    "Postman"
+    "Slack"
+    "Figma"
+    "zoom.us"
+    "System Settings"
   )
 
-  brew install dockutil
+  # Remove all current Dock items
   dockutil --no-restart --remove all "$HOME"
-  for app in "${apps[@]}"
-  do
-    echo "Keeping $app in Dock"
-    dockutil --no-restart --add "/Applications/$app.app" "$HOME"
+
+  for app in "${apps[@]}"; do
+    if [[ "$app" == "Terminal" ]]; then
+      path="/Applications/Utilities/$app.app"
+    elif [[ "$app" == "System Settings" ]]; then
+      path="/System/Applications/$app.app"
+    else
+      path="/Applications/$app.app"
+    fi
+
+    dockutil --no-restart --add "$path" "$HOME"
   done
+
+  # Restart the Dock to apply changes
   killall Dock
 
-  # restore $IFS
+  # Restore IFS
   IFS=$OLDIFS
 }
 

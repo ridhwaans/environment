@@ -8,6 +8,7 @@ node = "latest"
 go = "latest"
 java = "openjdk-24"
 python = "latest"
+ruby = "latest"
 
 gh = "latest"
 pipx = "latest"
