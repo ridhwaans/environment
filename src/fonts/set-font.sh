@@ -82,11 +82,24 @@ set_font() {
       echo "(wsl)"
 
       WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-      WINDOWS_TERMINAL_SETTINGS_DIR=$(echo $WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState)
+      # Expand glob safely using array and quotes
+      shopt -s nullglob
+      WINDOWS_TERMINAL_SETTINGS_DIR=("$WINDOWS_HOME"/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState)
 
+      if [ ${#WINDOWS_TERMINAL_SETTINGS_DIR[@]} -eq 0 ]; then
+          echo "Settings directory not found"
+          exit 1
+      fi
+      # Pick first match
+      WINDOWS_TERMINAL_SETTINGS_DIR="${WINDOWS_TERMINAL_SETTINGS_DIR[0]}"
+      SETTINGS_FILE=$WINDOWS_TERMINAL_SETTINGS_DIR/settings.json
+      echo $SETTINGS_FILE
+
+      # Run jq safely
       jq --arg base_name "$base_name" '.profiles.list |= map(if .source == "Windows.Terminal.Wsl" then .font.face = $base_name else . end)' \
-      "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json \
-      > temp.json && mv temp.json "$WINDOWS_TERMINAL_SETTINGS_DIR"/settings.json
+      $SETTINGS_FILE \
+      > temp.json && mv temp.json $SETTINGS_FILE
+      echo "Updated Windows Terminal font to '$base_name' size $FONT_SIZE."
     fi
   fi
 

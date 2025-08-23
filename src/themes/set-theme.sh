@@ -24,17 +24,25 @@ set_theme() {
       echo "(wsl)"
 
       WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-      WINDOWS_TERMINAL_SETTINGS_DIR=$WINDOWS_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState
+      # Expand glob safely using array and quotes
+      shopt -s nullglob
+      WINDOWS_TERMINAL_SETTINGS_DIR=("$WINDOWS_HOME"/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState)
 
-      # in script, echo expands glob, but ls -d does not
-      SETTINGS_FILE=$(echo $WINDOWS_TERMINAL_SETTINGS_DIR)/settings.json
+      if [ ${#WINDOWS_TERMINAL_SETTINGS_DIR[@]} -eq 0 ]; then
+          echo "Settings directory not found"
+          exit 1
+      fi
+      # Pick first match
+      WINDOWS_TERMINAL_SETTINGS_DIR="${WINDOWS_TERMINAL_SETTINGS_DIR[0]}"
+      SETTINGS_FILE=$WINDOWS_TERMINAL_SETTINGS_DIR/settings.json
       echo $SETTINGS_FILE
 
       echo $ENVIRONMENT_DIR/src/themes/$theme/terminal.json
       jq --slurpfile theme "$ENVIRONMENT_DIR/src/themes/$theme/terminal.json" \
-      '.schemes = [$theme]' \
+      '.schemes = [$theme[0]]' \
       $SETTINGS_FILE \
       > temp.json && mv temp.json $SETTINGS_FILE
+      echo "Updated Windows Terminal colorScheme to '$theme'."
 
     elif [ -n "$CODESPACES" ]; then
       echo "(github codespaces)"
