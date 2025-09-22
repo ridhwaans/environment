@@ -13,6 +13,7 @@ mise install
 
 eval "$(mise activate zsh)"
 
+# https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
 export VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"
 
 # ***********

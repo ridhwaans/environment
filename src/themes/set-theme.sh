@@ -128,8 +128,8 @@ EOD
     source $ENVIRONMENT_DIR/src/themes/$theme/vscode.sh
     code --install-extension $VSCODE_ICON_EXTENSION >/dev/null
     code --install-extension $VSCODE_COLOR_EXTENSION >/dev/null
-    sed -i "s/\"workbench.iconTheme\": \".*\"/\"workbench.iconTheme\": \"$VSCODE_ICON_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
-    sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$VSCODE_COLOR_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
+    conditional_sed -i "s/\"workbench.iconTheme\": \".*\"/\"workbench.iconTheme\": \"$VSCODE_ICON_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
+    conditional_sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$VSCODE_COLOR_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
   fi
 
   # Shell
