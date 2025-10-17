@@ -1,9 +1,8 @@
 return {
-	{ "shmerl/neogotham" },
 	{
-		"LazyVim/LazyVim",
-		opts = {
-			colorscheme = "neogotham",
-		},
-	},
+    "shmerl/neogotham",
+	  config = function()
+      vim.cmd.colorscheme("neogotham")
+    end,
+  },
 }

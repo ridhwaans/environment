@@ -10,11 +10,7 @@ export ENVIRONMENT_DIR="$HOME/Source/environment"
 ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 
 mise install
-
 eval "$(mise activate zsh)"
-
-# https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
-export VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"
 
 # ***********
 # ** zplug **
@@ -83,9 +79,10 @@ fi
 # ***************************
 
 export LANG=en_US.UTF-8
-export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export EDITOR="/usr/local/bin/nvim"
 export SUDO_EDITOR="$EDITOR -u NORC"
+# https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
+export VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"
 
 alias cds="cd $HOME/Source"
 alias evi="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"
@@ -120,6 +117,10 @@ if [ -n "$WSL_DISTRO_NAME" ]; then
   ln -sf $HOME $WINDOWS_HOME/$(basename $HOME)
 
   export PATH=/mnt/c/Program\ Files/Docker/Docker/resources/bin:$PATH
+
+  # https://github.com/zellij-org/zellij/issues/3379#issuecomment-2135062888
+  sudo mkdir $XDG_RUNTIME_DIR
+  sudo chown $USER:$USER $XDG_RUNTIME_DIR
 fi
 
 if [ -n "$CODESPACES" ]; then
