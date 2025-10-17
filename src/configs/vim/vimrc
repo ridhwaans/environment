@@ -1,3 +1,11 @@
+let $XDG_CONFIG_HOME = exists('$XDG_CONFIG_HOME') ? $XDG_CONFIG_HOME : expand('$HOME/.config')
+let $XDG_DATA_HOME = exists('$XDG_DATA_HOME') ? $XDG_DATA_HOME : expand('$HOME/.local/share')
+
+if has('nvim')
+  execute 'source ' . $XDG_CONFIG_HOME . '/nvim/init.lua'
+  finish
+endif
+
 syntax enable
 
 set tabstop=4       " number of visual spaces per TAB
@@ -13,7 +21,6 @@ set relativenumber  " show relative line numbers
 set laststatus=2    " display status line
 
 " vim-plug
-let $XDG_DATA_HOME = exists('$XDG_DATA_HOME') ? $XDG_DATA_HOME : expand('$HOME/.local/share')
 let g:vim_plug_home = expand('$XDG_DATA_HOME/vim')
 let g:vim_plug_colorscheme = "whatyouhide/vim-gotham"
 let g:colorscheme = "gotham256"
