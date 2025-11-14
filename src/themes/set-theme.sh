@@ -12,8 +12,41 @@ conditional_sed() {
 }
 
 set_theme() {
-  local profile_theme_name=$1
-  local theme=$2
+  theme=$1
+  case "$theme" in
+    gotham)
+      # nvim
+      NVIM_FILENAME="colorscheme.lua"
+      NVIM_COLORSCHEME="neogotham"
+
+      # Windows Terminal
+      WT_FILENAME="terminal.json"
+
+      # Terminal.app
+      TERM_FILENAME="Gotham.terminal"
+
+      # vim
+      VIMPLUG_COLORSCHEME="whatyouhide/vim-gotham"
+      VIM_COLORSCHEME="gotham256"
+
+      # VS Code
+      VSCODE_ICON_EXTENSION="PKief.material-icon-theme"
+      VSCODE_ICON_THEME="material-icon-theme"
+
+      VSCODE_COLOR_EXTENSION="alireza94.theme-gotham"
+      VSCODE_COLOR_THEME="Gotham"
+
+      apply_theme
+      ;;
+    *)
+      echo "Error: Unknown theme '$theme'."
+      exit 1
+      ;;
+  esac
+}
+
+apply_theme() {
+  echo "Applying theme: $theme"
 
   # Windows Terminal
   if [ $(uname) = Darwin ]; then
@@ -37,8 +70,8 @@ set_theme() {
       SETTINGS_FILE=$WINDOWS_TERMINAL_SETTINGS_DIR/settings.json
       echo $SETTINGS_FILE
 
-      echo $ENVIRONMENT_DIR/src/themes/$theme/terminal.json
-      jq --slurpfile theme "$ENVIRONMENT_DIR/src/themes/$theme/terminal.json" \
+      echo $ENVIRONMENT_DIR/src/themes/$theme/$WT_FILENAME
+      jq --slurpfile theme "$ENVIRONMENT_DIR/src/themes/$theme/$WT_FILENAME" \
       '.schemes = [$theme[0]]' \
       $SETTINGS_FILE \
       > temp.json && mv temp.json $SETTINGS_FILE
@@ -55,7 +88,7 @@ set_theme() {
 
   # Terminal.app
   if [ $(uname) = Darwin ]; then
-	echo "(mac)"
+  echo "(mac)"
 
 osascript <<EOD
 tell application "Terminal"
@@ -63,7 +96,7 @@ tell application "Terminal"
     local initialOpenedWindows
     local windowID
     set themeName to "$theme"
-    set themeFilePath to "$ENVIRONMENT_DIR/src/themes/$theme/$profile_theme_name.terminal"
+    set themeFilePath to "$ENVIRONMENT_DIR/src/themes/$theme/$TERM_FILENAME"
 
     (* Store the IDs of all the open terminal windows *)
     set initialOpenedWindows to id of every window
@@ -101,6 +134,7 @@ EOD
   fi
 
   # VS Code
+
   if [ $(uname) = Darwin ]; then
     echo "(mac)"
 
@@ -125,10 +159,10 @@ EOD
 
   if command -v code &>/dev/null; then
 
-    source $ENVIRONMENT_DIR/src/themes/$theme/vscode.sh
     code --install-extension $VSCODE_ICON_EXTENSION >/dev/null
-    code --install-extension $VSCODE_COLOR_EXTENSION >/dev/null
     conditional_sed -i "s/\"workbench.iconTheme\": \".*\"/\"workbench.iconTheme\": \"$VSCODE_ICON_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
+
+    code --install-extension $VSCODE_COLOR_EXTENSION >/dev/null
     conditional_sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$VSCODE_COLOR_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
   fi
 
@@ -140,9 +174,7 @@ EOD
 
   conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" $XDG_CONFIG_HOME/zsh/.zshrc
 
-  # Vim
-
-  source $ENVIRONMENT_DIR/src/themes/$theme/vim.sh
+  # vim
 
   conditional_sed -i "s|^let g:vim_plug_colorscheme = \".*\"|let g:vim_plug_colorscheme = \"$VIMPLUG_COLORSCHEME\"|" $XDG_CONFIG_HOME/vim/vimrc
 
@@ -150,10 +182,14 @@ EOD
 
   vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
 
-  # Neovim
-  NEOVIM_USER_PLUGINS_DIR=$XDG_CONFIG_HOME/nvim/lua/plugins
-  mkdir -p $NEOVIM_USER_PLUGINS_DIR && cp -f $ENVIRONMENT_DIR/src/themes/$theme/neovim.lua $NEOVIM_USER_PLUGINS_DIR/theme.lua
+  # nvim
+
+  NVIM_USER_PLUGINS_DIR=$XDG_CONFIG_HOME/nvim/lua/plugins
+  mkdir -p $NVIM_USER_PLUGINS_DIR && cp -f $ENVIRONMENT_DIR/src/themes/$theme/colorscheme.lua $NVIM_USER_PLUGINS_DIR/colorscheme.lua
+
+  nvim --headless +"colorscheme $NVIM_COLORSCHEME" +qa
 }
 
 export -f set_theme
+export -f apply_theme
 export -f conditional_sed

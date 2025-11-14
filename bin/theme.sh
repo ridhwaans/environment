@@ -5,7 +5,7 @@ function theme_help() {
 Usage: dotenv [OPTIONS]
 
 Themes:
-  Gotham
+  gotham
 
 Options:
   -n, --name     Specify the theme name
@@ -22,15 +22,7 @@ while [[ "$#" -gt 0 ]]; do
   case "$1" in
     -n|--name)
       if [[ -n "$2" && ! "$2" =~ ^- ]]; then
-        case "$2" in
-          Gotham)
-            set_theme "Gotham" "gotham"
-            ;;
-          *)
-            echo "Error: Unknown theme '$2'. Available themes: Gotham."
-            exit 1
-            ;;
-        esac
+        set_theme "$2"
         shift 2
       else
         echo "Error: Missing value for --name"
@@ -38,7 +30,7 @@ while [[ "$#" -gt 0 ]]; do
       fi
       ;;
     help)
-      theme_help
+      echo "Usage: $0 --name <theme>"
       exit 0
       ;;
     -*|--*)
@@ -51,3 +43,4 @@ while [[ "$#" -gt 0 ]]; do
       ;;
   esac
 done
+

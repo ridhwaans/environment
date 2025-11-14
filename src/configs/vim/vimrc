@@ -1,11 +1,6 @@
 let $XDG_CONFIG_HOME = exists('$XDG_CONFIG_HOME') ? $XDG_CONFIG_HOME : expand('$HOME/.config')
 let $XDG_DATA_HOME = exists('$XDG_DATA_HOME') ? $XDG_DATA_HOME : expand('$HOME/.local/share')
 
-if has('nvim')
-  execute 'source ' . $XDG_CONFIG_HOME . '/nvim/init.lua'
-  finish
-endif
-
 syntax enable
 
 set tabstop=4       " number of visual spaces per TAB

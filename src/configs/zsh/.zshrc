@@ -79,10 +79,10 @@ fi
 # ***************************
 
 export LANG=en_US.UTF-8
-export EDITOR="/usr/local/bin/nvim"
-export SUDO_EDITOR="$EDITOR -u NORC"
+
 # https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
-export VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"
+alias vim="vim -u $XDG_CONFIG_HOME/vim/vimrc"
+alias vi="vi -u $XDG_CONFIG_HOME/vim/vimrc"
 
 alias cds="cd $HOME/Source"
 alias evi="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"
