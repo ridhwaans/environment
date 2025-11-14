@@ -3,6 +3,7 @@ let $XDG_DATA_HOME = exists('$XDG_DATA_HOME') ? $XDG_DATA_HOME : expand('$HOME/.
 
 syntax enable
 
+set nocompatible    " allow backspace, arrow keys, other stuff
 set tabstop=4       " number of visual spaces per TAB
 set softtabstop=4   " number of spaces in tab when editing
 set expandtab       " tabs are spaces
@@ -25,6 +26,8 @@ execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
 call plug#begin(g:vim_plug_home . '/plugged')
 
 Plug g:vim_plug_colorscheme
+Plug 'preservim/nerdtree'
+Plug 'vim-airline/vim-airline'
 Plug 'machakann/vim-highlightedyank'
 
 call plug#end()
