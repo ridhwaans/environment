@@ -29,6 +29,8 @@ Plug g:vim_plug_colorscheme
 Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'machakann/vim-highlightedyank'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
@@ -96,11 +98,18 @@ nnoremap <leader>l <C-w>l
 nnoremap <leader>c <C-w>c
 nnoremap <leader>o <C-w>o
 
-" add a new buffer
-nnoremap <leader>n<left>  :topleft  vnew<CR>
-nnoremap <leader>n<up>    :topleft  new<CR>
-nnoremap <leader>n<right> :botright vnew<CR>
-nnoremap <leader>n<down>  :botright new<CR>
+" buffers
+nnoremap n<left>  :topleft  vnew<CR>
+nnoremap n<up>    :topleft  new<CR>
+nnoremap n<right> :botright vnew<CR>
+nnoremap n<down>  :botright new<CR>
+nnoremap bh       :bprevious<CR>
+nnoremap bl       :bnext<CR>
+nnoremap bc       :bdelete<CR>
+
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fg :Rg<CR>
+nnoremap <leader>fb :Buffers<CR>
 
 try
   execute 'colorscheme ' . g:colorscheme

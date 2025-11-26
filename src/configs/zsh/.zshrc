@@ -86,6 +86,7 @@ alias vi="vi -u $XDG_CONFIG_HOME/vim/vimrc"
 
 export EDITOR="code"
 alias cds="cd $HOME/Source"
+alias cde="cd $HOME/Source/environment"
 alias ee="$EDITOR $HOME/Source/environment"
 alias evi="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"
 alias ezsh="$EDITOR $XDG_CONFIG_HOME/zsh/.zshrc"
