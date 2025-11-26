@@ -84,7 +84,9 @@ export LANG=en_US.UTF-8
 alias vim="vim -u $XDG_CONFIG_HOME/vim/vimrc"
 alias vi="vi -u $XDG_CONFIG_HOME/vim/vimrc"
 
+export EDITOR="code"
 alias cds="cd $HOME/Source"
+alias ee="$EDITOR $HOME/Source/environment"
 alias evi="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"
 alias ezsh="$EDITOR $XDG_CONFIG_HOME/zsh/.zshrc"
 alias es="[ -f $HOME/Source/scripts.sh ] && $EDITOR $HOME/Source/scripts.sh"

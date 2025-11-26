@@ -59,6 +59,7 @@ nnoremap <leader>q :q<CR>
 " yanking to and pasting from system clipboard
 noremap <leader>y "+y
 noremap <leader>p "+p
+
 " jump half-page up/down with cursor in middle-of-page
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
@@ -67,36 +68,39 @@ nnoremap <C-u> <C-u>zz
 nnoremap evi :tabedit $MYVIMRC<CR>
 " reload vimrc
 nnoremap rvi :source $MYVIMRC<CR>
+
+" tabs
+nnoremap tn  :tabnew<CR>
+nnoremap te  :tabedit<Space>
+nnoremap tc  :tabclose<CR>
+nnoremap t0  :tabfirst<CR>
+nnoremap th  :tabprev<CR>
+nnoremap tl  :tabnext<CR>
+nnoremap t$  :tablast<CR>
+nnoremap tm  :tabmove<Space>
+
 " goto tab by index
 nnoremap <leader>1 1gt
 nnoremap <leader>2 2gt
 nnoremap <leader>3 3gt
 nnoremap <leader>4 4gt
 nnoremap <leader>5 5gt
-" tabs
-nnoremap tn  :tabnew<CR>
-nnoremap tt  :tabedit<Space>
-nnoremap td  :tabclose<CR>
-nnoremap th  :tabfirst<CR>
-nnoremap tk  :tabnext<CR>
-nnoremap tj  :tabprev<CR>
-nnoremap tl  :tablast<CR>
-nnoremap tn  :tabnext<Space>
-nnoremap tm  :tabmove<Space>
 
-" panes
-nnoremap <leader>sv :vsplit<CR>
-nnoremap <leader>sh :split<CR>
+" windows
+nnoremap <leader><Bar> :vsplit<CR>
+nnoremap <leader>- :split<CR>
 nnoremap <leader>h <C-w>h
 nnoremap <leader>j <C-w>j
 nnoremap <leader>k <C-w>k
 nnoremap <leader>l <C-w>l
+nnoremap <leader>c <C-w>c
+nnoremap <leader>o <C-w>o
 
 " add a new buffer
-nnoremap <leader>sn<left>  :topleft  vnew<CR>
-nnoremap <leader>sn<right> :botright vnew<CR>
-nnoremap <leader>sn<up>    :topleft  new<CR>
-nnoremap <leader>sn<down>  :botright new<CR>
+nnoremap <leader>n<left>  :topleft  vnew<CR>
+nnoremap <leader>n<up>    :topleft  new<CR>
+nnoremap <leader>n<right> :botright vnew<CR>
+nnoremap <leader>n<down>  :botright new<CR>
 
 try
   execute 'colorscheme ' . g:colorscheme
