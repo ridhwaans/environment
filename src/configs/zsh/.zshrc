@@ -89,6 +89,7 @@ alias cds="cd $HOME/Source"
 alias cde="cd $HOME/Source/environment"
 alias ee="$EDITOR $HOME/Source/environment"
 alias evi="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"
+alias envim="$EDITOR $XDG_CONFIG_HOME/nvim"
 alias ezsh="$EDITOR $XDG_CONFIG_HOME/zsh/.zshrc"
 alias es="[ -f $HOME/Source/scripts.sh ] && $EDITOR $HOME/Source/scripts.sh"
 
@@ -99,8 +100,8 @@ if [ $(uname) = Darwin ]; then
   defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist Sound -int 18
   defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist Display -int 18
 
+  defaults write -g com.apple.keyboard.fnState -bool true
   defaults write com.apple.finder ShowPathbar -bool true
-  # Don't display prompt when quitting iTerm
   defaults write com.googlecode.iterm2 PromptOnQuit -bool false
   # Don't open `Music.app`
   launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist
