@@ -40,8 +40,11 @@ map("n", "<leader>w", ":w<CR>", silent)
 map("n", "<leader>q", ":q<CR>", silent)
 
 -- system clipboard
-map("n", "<leader>y", '"+y', silent)
-map("n", "<leader>p", '"+p', silent)
+map("n", "<leader>Y", '"+Y', opts)
+map("v", "<leader>y", '"+y', opts)
+
+map("n", "<leader>p", '"+p', opts)
+map("v", "<leader>p", '"+p', opts)
 
 -- jump half-page up/down with cursor in middle-of-page
 map("n", "<C-d>", "<C-d>zz", silent)

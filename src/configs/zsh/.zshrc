@@ -79,12 +79,26 @@ fi
 # ***************************
 
 export LANG=en_US.UTF-8
+export EDITOR="code"
+export FZF_DEFAULT_OPTS="--layout=reverse"
 
 # https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
 alias vim="vim -u $XDG_CONFIG_HOME/vim/vimrc"
 alias vi="vi -u $XDG_CONFIG_HOME/vim/vimrc"
 
-export EDITOR="code"
+function nvims() {
+  items=("default" "LazyVim" "JonathanGin52Nvim" "craftzdogNvim" "kennethnymNvim" "kickstart.nvim")
+  config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
+  if [[ -z $config ]]; then
+    echo "Nothing selected"
+    return 0
+  elif [[ $config == "default" ]]; then
+    config=""
+  fi
+  NVIM_APPNAME=$config nvim $@
+}
+
+
 alias cds="cd $HOME/Source"
 alias cde="cd $HOME/Source/environment"
 alias ee="$EDITOR $HOME/Source/environment"
@@ -160,4 +174,7 @@ export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
 export HISTSIZE=50000
 export SAVEHIST=10000
-setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_REDUCE_BLANKS EXTENDED_HISTORY
+
+setopt APPEND_HISTORY INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_REDUCE_BLANKS
+fc -R
+

@@ -6,6 +6,7 @@ Usage: dotenv [OPTIONS]
 
 Fonts:
   Roboto Mono
+  SF Mono
 
 Options:
   -n, --name     Specify the font name
@@ -26,8 +27,11 @@ while [[ "$#" -gt 0 ]]; do
           "Roboto Mono")
             set_font "RobotoMonoForPowerline-Regular" "Roboto Mono for Powerline.ttf" "https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20for%20Powerline.ttf"
             ;;
+          "SF Mono")
+            set_font "SFMonoPowerline-Regular" "SF-Mono-Powerline-Regular.otf" "https://github.com/Twixes/SF-Mono-Powerline/blob/master/SF-Mono-Powerline-Regular.otf"
+            ;;
           *)
-            echo "Error: Unknown font '$2'. Available fonts: 'Roboto Mono'"
+            echo "Error: Unknown font '$2'. Available fonts: 'Roboto Mono', 'SF Mono'"
             exit 1
             ;;
         esac

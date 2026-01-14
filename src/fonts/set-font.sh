@@ -12,13 +12,13 @@ conditional_sed() {
 }
 
 set_font() {
-  local profile_font_name=$1
+  local postscript_name=$1
 	local file=$2
-	local url=$3
-  # Extract the base name (without the extension)
   base_name="${file%.*}"
-  echo $base_name
+	local url=$3
   FONT_SIZE="11"
+
+  echo "postscript_name=$postscript_name, file=$file, base_name=$base_name, url=$url, FONT_SIZE=$FONT_SIZE"
 
   # Install
 	if ! $(fc-list | grep -i "$base_name" >/dev/null); then
@@ -113,7 +113,7 @@ tell application "Terminal"
     set defaultProfile to default settings
 
     -- Change the font name and size of the default profile
-    set font name of defaultProfile to "$profile_font_name"
+    set font name of defaultProfile to "$postscript_name"
     set font size of defaultProfile to $FONT_SIZE
 end tell
 EOD
