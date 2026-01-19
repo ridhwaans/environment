@@ -19,7 +19,7 @@ set laststatus=2    " display status line
 " vim-plug
 let g:vim_plug_home = expand('$XDG_DATA_HOME/vim')
 let g:vim_plug_colorscheme = "whatyouhide/vim-gotham"
-let g:colorscheme = "gotham256"
+let g:colorscheme = "gotham"
 
 execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
 
@@ -54,9 +54,6 @@ map <F4> :NERDTreeToggle<CR>
 map <F5> :AirlineToggle<CR>
 
 let g:mapleader=' ' " \ by default
-
-nnoremap <leader>w :w<CR>
-nnoremap <leader>q :q<CR>
 
 " yanking to and pasting from system clipboard
 noremap <leader>y "+y

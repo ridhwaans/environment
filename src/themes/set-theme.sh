@@ -27,7 +27,7 @@ set_theme() {
 
       # vim
       VIMPLUG_COLORSCHEME="whatyouhide/vim-gotham"
-      VIM_COLORSCHEME="gotham256"
+      VIM_COLORSCHEME="gotham"
 
       # VS Code
       VSCODE_ICON_EXTENSION="PKief.material-icon-theme"
