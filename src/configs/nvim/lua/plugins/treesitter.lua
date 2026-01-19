@@ -1,36 +1,45 @@
 return {
-        { "nvim-treesitter/playground", cmd = "TSPlaygroundToggle" },
         {
                 "nvim-treesitter/nvim-treesitter",
-                build = ":TSUpdate",
                 opts = {
+                        highlight = { enable = true },
+                        indent = { enable = true },
                         ensure_installed = {
                                 "cmake",
                                 "cpp",
-                                "css",
                                 "gitignore",
                                 "go",
                                 "graphql",
                                 "http",
                                 "java",
                                 "scss",
-                                "sql"
+                                "sql",
+                                "json",
+                                "javascript",
+                                "typescript",
+                                "tsx",
+                                "yaml",
+                                "html",
+                                "css",
+                                "markdown",
+                                "markdown_inline",
+                                "bash",
+                                "vim",
+                                "lua",
+                                "dockerfile",
                         },
-
-                        query_linter = {
+                        build = ":TSUpdate",
+                        event = { "BufReadPre", "BufNewFile" },
+                        incremental_selection = {
                                 enable = true,
-                        },
+                                keymaps = {
+                                        init_selection = "<C-space>",
+                                        node_incremental = "<C-space>",
+                                        scope_incremental = false,
+                                        node_decremental = "<bs>",
+                                }
+                        }
+                        
                 },
-        config = function(_, opts)
-                local TS = require("nvim-treesitter")
-                TS.setup(opts)
-
-                vim.filetype.add({
-                        extension = {
-                                mdx = "MDX",
-                        },
-                })
-                vim.treesitter.language.register("markdown", "mdx")
-        end,
         },
 }

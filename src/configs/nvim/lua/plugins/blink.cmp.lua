@@ -1,11 +1,11 @@
 return {
         {
-                'rafamdriz/friendly-snippets',
-                enabled = false,
+                'rafamadriz/friendly-snippets',
+                enabled = true,
         },
         {
                 'saghen/blink.cmp',
-                dependencies = 'rafamdriz/friendly-snippets',
-                enabled = false,
+                dependencies = 'rafamadriz/friendly-snippets',
+                enabled = true,
         }
 }
