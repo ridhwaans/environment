@@ -76,5 +76,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
                 map("n", "gi", vim.lsp.buf.implementation, { desc = "Goto implementation" })
                 map("n", "<leader>m", vim.lsp.buf.rename, { desc = "Smart rename" })
                 map("n", "<leader>K", vim.lsp.buf.hover, { desc = "Show documentation" })
+                map("n", "<leader>D", vim.diagnostic.open_float, { desc = "Show [D]iagnoster error messages"})
         end
 })
+
+conform = require("conform")
+map({"n","v"}, "<leader>fw", function() conform.format({}) end, { desc = "Format file or range (in visual mode)" })
