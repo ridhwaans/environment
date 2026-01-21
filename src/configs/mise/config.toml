@@ -2,6 +2,7 @@
 
 fastfetch = "latest"
 jq = "latest"
+fzf = "latest"
 
 bun = "latest"
 node = "latest"
