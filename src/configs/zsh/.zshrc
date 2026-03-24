@@ -12,6 +12,8 @@ ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 mise install
 eval "$(mise activate zsh)"
 
+eval "$(starship init zsh)"
+
 # ***********
 # ** zplug **
 # ***********
@@ -165,6 +167,7 @@ PROMPT_THEME_FILE="$ENVIRONMENT_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-t
 [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
 
 setopt PROMPT_SUBST # enable command substitution in prompt (for shell prompt theme)
+setopt NO_CASE_GLOB # allows case-insensitive tab completion
 
 # *************
 # ** History **

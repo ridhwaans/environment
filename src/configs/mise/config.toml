@@ -1,13 +1,11 @@
 [tools]
 
 fastfetch = "latest"
-jq = "latest"
-fzf = "latest"
 
 bun = "latest"
 node = "latest"
 go = "latest"
-java = "openjdk-24"
+java = { version = "latest", vendor = "openjdk" }
 python = "latest"
 ruby = "latest"
 
