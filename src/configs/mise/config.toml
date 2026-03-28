@@ -7,7 +7,7 @@ node = "latest"
 go = "latest"
 java = { version = "latest", vendor = "openjdk" }
 python = "latest"
-ruby = "latest"
+# ruby = "latest"
 
 gh = "latest"
 pipx = "latest"

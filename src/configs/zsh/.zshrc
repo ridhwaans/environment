@@ -28,7 +28,12 @@ if ! zplug check --verbose; then
     fi
 fi
 
-zplug load --verbose
+if ! zplug load --verbose; then
+  rm -rf "$ZPLUG_HOME/cache"
+  zplug clear --force
+  zplug install
+  zplug load --verbose
+fi
 
 # **********************
 # ** Helper functions **

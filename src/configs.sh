@@ -125,6 +125,8 @@ setup_cli_links() {
 
 setup_mise_runtime() {
   local mise_bin
+  local install_log
+  local install_status
 
   echo "(6/7) Setting up mise runtime..."
 
@@ -144,7 +146,28 @@ setup_mise_runtime() {
     "$mise_bin" trust "$ENVIRONMENT_DIR/src/configs/mise/config.toml"
   fi
 
-  "$mise_bin" install
+  install_log=$(mktemp)
+
+  set +e
+  (
+    cd "$HOME" || exit 1
+    "$mise_bin" install
+  ) 2>&1 | tee "$install_log"
+  install_status=${PIPESTATUS[0]}
+  set -e
+
+  if [ "$install_status" -ne 0 ]; then
+    if grep -qi "rate limit exceeded" "$install_log"; then
+      echo "mise install hit GitHub API rate limits; skipping runtime install for this run."
+      rm -f "$install_log"
+      return 0
+    fi
+
+    rm -f "$install_log"
+    return "$install_status"
+  fi
+
+  rm -f "$install_log"
 }
 
 sync_editor_plugins() {
