@@ -11,6 +11,7 @@ ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 
 mise install
 eval "$(mise activate zsh)"
+export PATH="$XDG_DATA_HOME/mise/shims:$PATH"
 
 eval "$(starship init zsh)"
 
@@ -81,15 +82,23 @@ fi
 # ***************************
 
 export LANG=en_US.UTF-8
-export EDITOR="code"
+export EDITOR="nvim"
 export FZF_DEFAULT_OPTS="--layout=reverse"
 
 # https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
 alias vim="vim -u $XDG_CONFIG_HOME/vim/vimrc"
 alias vi="vi -u $XDG_CONFIG_HOME/vim/vimrc"
 
+alias nvim-jonathang="NVIM_APPNAME=JonathanGin52Nvim nvim"
+alias nvim-kennethn="NVIM_APPNAME=kennethnymNvim nvim"
+alias nvim-craftzdog="NVIM_APPNAME=craftzdogNvim nvim"
+alias nvim-magicalBat="NVIM_APPNAME=magicalBatNvim nvim"
+alias nvim-ridhwaans="NVIM_APPNAME=ridhwaansNvim nvim"
+alias nvim-kickstart="NVIM_APPNAME=kickstart.nvim nvim"
+alias nvim-lazy="NVIM_APPNAME=LazyVim nvim"
+
 function nvims() {
-  items=("default" "LazyVim" "JonathanGin52Nvim" "craftzdogNvim" "kennethnymNvim" "kickstart.nvim")
+  items=("default" "LazyVim" "JonathanGin52Nvim" "craftzdogNvim" "magicalBatNvim" "kennethnymNvim" "kickstart.nvim")
   config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
   if [[ -z $config ]]; then
     echo "Nothing selected"
@@ -160,7 +169,7 @@ THEME_FILE="$ENVIRONMENT_DIR/src/themes/$THEME_NAME/theme.sh"
 # ** Prompt theme **
 # ******************
 
-PROMPT_THEME="agnoster"
+PROMPT_THEME=agnoster
 
 PROMPT_THEME_FILE="$ENVIRONMENT_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
 
@@ -180,4 +189,3 @@ export SAVEHIST=10000
 
 setopt APPEND_HISTORY INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_REDUCE_BLANKS
 fc -R
-

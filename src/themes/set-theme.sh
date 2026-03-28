@@ -2,6 +2,8 @@
 
 set -e
 
+source "$ENVIRONMENT_DIR/src/assets.sh"
+
 conditional_sed() {
     # use gnu sed for no explicit backup in-place editing on mac
     if [ $(uname) = Darwin ]; then
@@ -13,36 +15,8 @@ conditional_sed() {
 
 set_theme() {
   theme=$1
-  case "$theme" in
-    gotham)
-      # nvim
-      NVIM_FILENAME="colorscheme.lua"
-      NVIM_COLORSCHEME="neogotham"
-
-      # Windows Terminal
-      WT_FILENAME="terminal.json"
-
-      # Terminal.app
-      TERM_FILENAME="Gotham.terminal"
-
-      # vim
-      VIMPLUG_COLORSCHEME="whatyouhide/vim-gotham"
-      VIM_COLORSCHEME="gotham"
-
-      # VS Code
-      VSCODE_ICON_EXTENSION="PKief.material-icon-theme"
-      VSCODE_ICON_THEME="material-icon-theme"
-
-      VSCODE_COLOR_EXTENSION="alireza94.theme-gotham"
-      VSCODE_COLOR_THEME="Gotham"
-
-      apply_theme
-      ;;
-    *)
-      echo "Error: Unknown theme '$theme'."
-      exit 1
-      ;;
-  esac
+  load_theme_manifest "$theme"
+  apply_theme
 }
 
 apply_theme() {
@@ -70,10 +44,10 @@ apply_theme() {
       SETTINGS_FILE=$WINDOWS_TERMINAL_SETTINGS_DIR/settings.json
       echo $SETTINGS_FILE
 
-      echo $ENVIRONMENT_DIR/src/themes/$theme/$WT_FILENAME
-      jq --slurpfile theme "$ENVIRONMENT_DIR/src/themes/$theme/$WT_FILENAME" \
+      echo "$THEME_DIR/$WT_FILENAME"
+      jq --slurpfile theme "$THEME_DIR/$WT_FILENAME" \
       '.schemes = [$theme[0]]' \
-      $SETTINGS_FILE \
+      "$SETTINGS_FILE" \
       > temp.json && mv temp.json $SETTINGS_FILE
       echo "Updated Windows Terminal colorScheme to '$theme'."
 
@@ -96,7 +70,7 @@ tell application "Terminal"
     local initialOpenedWindows
     local windowID
     set themeName to "$theme"
-    set themeFilePath to "$ENVIRONMENT_DIR/src/themes/$theme/$TERM_FILENAME"
+    set themeFilePath to "$THEME_DIR/$TERM_FILENAME"
 
     (* Store the IDs of all the open terminal windows *)
     set initialOpenedWindows to id of every window
@@ -172,7 +146,7 @@ EOD
 
   # Prompt
 
-  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME="agnoster"/" $XDG_CONFIG_HOME/zsh/.zshrc
+  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME=\"$PROMPT_THEME\"/" $XDG_CONFIG_HOME/zsh/.zshrc
 
   # vim
 
@@ -185,7 +159,7 @@ EOD
   # nvim
 
   NVIM_USER_PLUGINS_DIR=$XDG_CONFIG_HOME/nvim/lua/plugins
-  mkdir -p $NVIM_USER_PLUGINS_DIR && cp -f $ENVIRONMENT_DIR/src/themes/$theme/colorscheme.lua $NVIM_USER_PLUGINS_DIR/colorscheme.lua
+  mkdir -p "$NVIM_USER_PLUGINS_DIR" && cp -f "$THEME_DIR/$NVIM_FILENAME" "$NVIM_USER_PLUGINS_DIR/colorscheme.lua"
 
   nvim --headless +"colorscheme $NVIM_COLORSCHEME" +qa
 }

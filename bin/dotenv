@@ -1,46 +1,34 @@
 #!/bin/bash
 
-source $ENVIRONMENT_DIR/src/fonts/set-font.sh
-source $ENVIRONMENT_DIR/src/themes/set-theme.sh
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+DEFAULT_ENVIRONMENT_DIR=$(cd "$SCRIPT_DIR/.." && pwd)
+export ENVIRONMENT_DIR="${ENVIRONMENT_DIR:-$DEFAULT_ENVIRONMENT_DIR}"
 
-function show_help() {
-  cat <<EOF
-Usage: $(basename "$0") [COMMAND] [OPTIONS]
+find_standalone_dotenv_cli() {
+  local candidate
+  local current_script
 
-Commands:
-  update               Get the newest changes if there are any
-  font                 Font management (use 'font help' for details)
-  theme                Theme management (use 'theme help' for details)
-  help                 Show this help message
-EOF
+  current_script="$SCRIPT_DIR/dotenv"
+
+  for candidate in \
+    "${DOTENV_CLI_BIN:-}" \
+    "$HOME/Source/dotenv-cli/bin/dotenv"
+  do
+    if [[ -n "$candidate" && -x "$candidate" ]]; then
+      if [[ "$(cd "$(dirname "$candidate")" && pwd)/$(basename "$candidate")" != "$current_script" ]]; then
+        echo "$candidate"
+        return 0
+      fi
+    fi
+  done
+
+  return 1
 }
 
-# Main
-if [[ "$#" -lt 1 ]]; then
-  cat "$ENVIRONMENT_DIR/bin/banner.txt"
-  show_help
-  exit 1
+standalone_cli=$(find_standalone_dotenv_cli)
+if [[ -n "$standalone_cli" ]]; then
+  exec "$standalone_cli" "$@"
 fi
 
-command="$1"
-shift
-
-case "$command" in
-  update)
-    $ENVIRONMENT_DIR/bin/update.sh
-    ;;
-  font)
-    $ENVIRONMENT_DIR/bin/font.sh "$@"
-    ;;
-  theme)
-    $ENVIRONMENT_DIR/bin/theme.sh "$@"
-    ;;
-  help)
-    show_help
-    ;;
-  *)
-    echo "Error: Unknown command '$command'."
-    show_help
-    exit 1
-    ;;
-esac
+source "$ENVIRONMENT_DIR/src/dotenv-local.sh"
+dotenv_dispatch_local "$@"

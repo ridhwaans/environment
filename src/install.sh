@@ -2,20 +2,22 @@
 
 set -e
 
-echo "ADJUSTED_ID: $ADJUSTED_ID"
+SCRIPT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_ROOT/runtime.sh"
+source "$SCRIPT_ROOT/assets.sh"
 
-SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")
-echo "SCRIPT_ROOT: $SCRIPT_ROOT"
-source $SCRIPT_ROOT/_helper.sh
-export CONFIGS_DIR=$SCRIPT_ROOT/configs
+run_environment_install() {
+  echo "ADJUSTED_ID: $ADJUSTED_ID"
+  echo "SCRIPT_ROOT: $SCRIPT_ROOT"
 
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+  sync_assets
 
-for script in "$SCRIPT_ROOT/install/common-utils.sh" "$SCRIPT_ROOT/configs.sh"; do
-  echo "Running $(basename "$script")..."
-  bash "$script"
-done
+  for script in "$SCRIPT_ROOT/install/common-utils.sh" "$SCRIPT_ROOT/configs.sh"; do
+    echo "Running $(basename "$script")..."
+    bash "$script"
+  done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  run_environment_install
+fi
