@@ -4,31 +4,71 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 DEFAULT_ENVIRONMENT_DIR=$(cd "$SCRIPT_DIR/.." && pwd)
 export ENVIRONMENT_DIR="${ENVIRONMENT_DIR:-$DEFAULT_ENVIRONMENT_DIR}"
 
-find_standalone_dotenv_cli() {
-  local candidate
-  local current_script
+source "$ENVIRONMENT_DIR/src/runtime.sh"
+source "$ENVIRONMENT_DIR/src/defaults.sh"
+source "$ENVIRONMENT_DIR/src/assets.sh"
+source "$ENVIRONMENT_DIR/src/configs.sh"
+source "$ENVIRONMENT_DIR/src/fonts/set-font.sh"
+source "$ENVIRONMENT_DIR/src/themes/set-theme.sh"
+source "$ENVIRONMENT_DIR/src/commands/version.sh"
+source "$ENVIRONMENT_DIR/src/commands/install.sh"
+source "$ENVIRONMENT_DIR/src/commands/update.sh"
+source "$ENVIRONMENT_DIR/src/commands/assets.sh"
+source "$ENVIRONMENT_DIR/src/commands/reset.sh"
 
-  current_script="$SCRIPT_DIR/dotenv"
+show_help() {
+  cat <<EOF
+Usage: $(basename "$0") [COMMAND] [OPTIONS]
 
-  for candidate in \
-    "${DOTENV_CLI_BIN:-}" \
-    "$HOME/Source/dotenv-cli/bin/dotenv"
-  do
-    if [[ -n "$candidate" && -x "$candidate" ]]; then
-      if [[ "$(cd "$(dirname "$candidate")" && pwd)/$(basename "$candidate")" != "$current_script" ]]; then
-        echo "$candidate"
-        return 0
-      fi
-    fi
-  done
-
-  return 1
+Commands:
+  install              Install environment-managed dependencies and configs
+  update               Get the newest changes for the environment repo
+  reset                Reset system, appearance, or both
+  assets               Manage external theme/font assets
+  font                 Font management (use 'font help' for details)
+  theme                Theme management (use 'theme help' for details)
+  version              Show the installed dotenv version
+  help                 Show this help message
+EOF
 }
 
-standalone_cli=$(find_standalone_dotenv_cli)
-if [[ -n "$standalone_cli" ]]; then
-  exec "$standalone_cli" "$@"
+if [[ "$#" -lt 1 ]]; then
+  dotenv_show_banner
+  show_help
+  exit 1
 fi
 
-source "$ENVIRONMENT_DIR/src/dotenv-local.sh"
-dotenv_dispatch_local "$@"
+command="$1"
+shift
+
+case "$command" in
+  install)
+    dotenv_handle_install "$@"
+    ;;
+  update)
+    dotenv_handle_update "$@"
+    ;;
+  reset)
+    dotenv_handle_reset "$@"
+    ;;
+  assets)
+    dotenv_handle_assets "$@"
+    ;;
+  font)
+    "$ENVIRONMENT_DIR/bin/font.sh" "$@"
+    ;;
+  theme)
+    "$ENVIRONMENT_DIR/bin/theme.sh" "$@"
+    ;;
+  version)
+    dotenv_version
+    ;;
+  help)
+    show_help
+    ;;
+  *)
+    echo "Error: Unknown command '$command'."
+    show_help
+    exit 1
+    ;;
+esac
