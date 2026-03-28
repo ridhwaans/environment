@@ -1,6 +1,5 @@
 local opt = vim.opt
 
-opt.compatible = false
 opt.tabstop = 4
 opt.softtabstop = 4
 opt.expandtab = true

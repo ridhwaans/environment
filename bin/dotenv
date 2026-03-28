@@ -25,6 +25,7 @@ Commands:
   update               Get the newest changes for the environment repo
   reset                Reset system, appearance, or both
   assets               Manage external theme/font assets
+  preset               Preset management (use 'preset help' for details)
   font                 Font management (use 'font help' for details)
   theme                Theme management (use 'theme help' for details)
   version              Show the installed dotenv version
@@ -53,6 +54,9 @@ case "$command" in
     ;;
   assets)
     dotenv_handle_assets "$@"
+    ;;
+  preset)
+    "$ENVIRONMENT_DIR/bin/preset.sh" "$@"
     ;;
   font)
     "$ENVIRONMENT_DIR/bin/font.sh" "$@"

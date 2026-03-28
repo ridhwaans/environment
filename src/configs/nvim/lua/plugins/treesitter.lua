@@ -1,6 +1,8 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		event = { "BufReadPre", "BufNewFile" },
 		opts = {
 			highlight = { enable = true },
 			indent = { enable = true },
@@ -28,8 +30,6 @@ return {
 				"lua",
 				"dockerfile",
 			},
-			build = ":TSUpdate",
-			event = { "BufReadPre", "BufNewFile" },
 			incremental_selection = {
 				enable = true,
 				keymaps = {

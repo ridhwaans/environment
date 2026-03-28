@@ -29,7 +29,7 @@ copy_path() {
 }
 
 setup_ide() {
-  echo "(1/4) Setting up IDE..."
+  echo "(1/7) Setting up IDE..."
   if command -v code &>/dev/null; then
     code --extensions-dir "$XDG_DATA_HOME/code/extensions"
 
@@ -67,7 +67,7 @@ setup_ide() {
 }
 
 setup_terminal_emulator() {
-  echo "(2/4) Setting up terminal emulator..."
+  echo "(2/7) Setting up terminal emulator..."
   if [ "$(uname)" = Darwin ]; then
     echo "(mac)"
 
@@ -89,7 +89,7 @@ setup_terminal_emulator() {
 }
 
 setup_home_files() {
-  echo "(3/4) Setting up home files & permissions..."
+  echo "(3/7) Setting up home files & permissions..."
 
   for entry in "$CONFIGS_DIR"/*; do
     name=$(basename "$entry")
@@ -112,12 +112,43 @@ setup_home_files() {
 }
 
 setup_source_directory() {
-  echo "(4/4) Setting up Source directory..."
+  echo "(4/7) Setting up Source directory..."
   # https://gist.github.com/ridhwaans/08f2fc5e9b3614a3154cef749a43a568
   mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwaans/08f2fc5e9b3614a3154cef749a43a568/raw/scripts.sh" -o "$HOME/Source/scripts.sh" && chmod +x "$HOME/Source/scripts.sh"
 }
 
+setup_cli_links() {
+  echo "(5/7) Setting up dotenv CLI..."
+  mkdir -p "$XDG_BIN_HOME"
+  ln -sf "$ENVIRONMENT_DIR/bin/dotenv" "$XDG_BIN_HOME/dotenv"
+}
+
+setup_mise_runtime() {
+  local mise_bin
+
+  echo "(6/7) Setting up mise runtime..."
+
+  if [ -x "$XDG_BIN_HOME/mise" ]; then
+    mise_bin="$XDG_BIN_HOME/mise"
+  elif command -v mise &>/dev/null; then
+    mise_bin="$(command -v mise)"
+  else
+    return 0
+  fi
+
+  if [ -f "$XDG_CONFIG_HOME/mise/config.toml" ]; then
+    "$mise_bin" trust "$XDG_CONFIG_HOME/mise/config.toml"
+  fi
+
+  if [ -f "$ENVIRONMENT_DIR/src/configs/mise/config.toml" ]; then
+    "$mise_bin" trust "$ENVIRONMENT_DIR/src/configs/mise/config.toml"
+  fi
+
+  "$mise_bin" install
+}
+
 sync_editor_plugins() {
+  echo "(7/7) Syncing editor plugins..."
   vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
   nvim --headless "+Lazy! sync" +qa
 }
@@ -127,6 +158,8 @@ setup_configs() {
   setup_terminal_emulator
   setup_home_files
   setup_source_directory
+  setup_cli_links
+  setup_mise_runtime
   sync_editor_plugins
 
   echo "Done!"

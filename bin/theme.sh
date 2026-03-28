@@ -55,37 +55,43 @@ Options:
 EOF
 }
 
-if [[ "$#" -lt 1 ]]; then
-  current_theme_name
-  exit 0
-fi
+theme_main() {
+  if [[ "$#" -lt 1 ]]; then
+    current_theme_name
+    return 0
+  fi
 
-while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    -n|--name)
-      if [[ -n "$2" && ! "$2" =~ ^- ]]; then
-        set_theme "$2"
-        shift 2
-      else
-        echo "Error: Missing value for --name"
-        exit 1
-      fi
-      ;;
-    current)
-      current_theme_name
-      exit 0
-      ;;
-    help)
-      theme_help
-      exit 0
-      ;;
-    -*|--*)
-      echo "Unknown option: $1"
-      exit 1
-      ;;
-    *)
-      echo "Unknown argument: $1"
-      exit 1
-      ;;
-  esac
-done
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      -n|--name)
+        if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+          set_theme "$2"
+          shift 2
+        else
+          echo "Error: Missing value for --name"
+          return 1
+        fi
+        ;;
+      current)
+        current_theme_name
+        return 0
+        ;;
+      help)
+        theme_help
+        return 0
+        ;;
+      -*|--*)
+        echo "Unknown option: $1"
+        return 1
+        ;;
+      *)
+        echo "Unknown argument: $1"
+        return 1
+        ;;
+    esac
+  done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  theme_main "$@"
+fi

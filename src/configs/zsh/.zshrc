@@ -7,9 +7,7 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export PATH="$XDG_BIN_HOME:$PATH"
 
 export ENVIRONMENT_DIR="$HOME/Source/environment"
-ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 
-mise install
 eval "$(mise activate zsh)"
 export PATH="$XDG_DATA_HOME/mise/shims:$PATH"
 
@@ -21,7 +19,7 @@ eval "$(starship init zsh)"
 
 export ZPLUG_HOME="$XDG_DATA_HOME/zplug"
 
-source $ZPLUG_HOME/init.zsh
+source "$ZPLUG_HOME/init.zsh"
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
@@ -160,8 +158,16 @@ fi
 # *****************
 
 THEME_NAME="gotham"
+ENVIRONMENT_ASSETS_DIR="${ENVIRONMENT_ASSETS_DIR:-$XDG_DATA_HOME/environment-assets}"
+ENVIRONMENT_LOCAL_ASSETS_DIR="${ENVIRONMENT_LOCAL_ASSETS_DIR:-$HOME/Source/assets}"
 
-THEME_FILE="$ENVIRONMENT_DIR/src/themes/$THEME_NAME/theme.sh"
+if [ -s "$ENVIRONMENT_ASSETS_DIR/themes/$THEME_NAME/theme.sh" ]; then
+  THEME_FILE="$ENVIRONMENT_ASSETS_DIR/themes/$THEME_NAME/theme.sh"
+elif [ -s "$ENVIRONMENT_LOCAL_ASSETS_DIR/themes/$THEME_NAME/theme.sh" ]; then
+  THEME_FILE="$ENVIRONMENT_LOCAL_ASSETS_DIR/themes/$THEME_NAME/theme.sh"
+else
+  THEME_FILE=""
+fi
 
 [[ -s $THEME_FILE ]] && source $THEME_FILE
 

@@ -96,38 +96,44 @@ Options:
 EOF
 }
 
-if [[ "$#" -lt 1 ]]; then
-  current_font_name
-  exit 0
-fi
+font_main() {
+  if [[ "$#" -lt 1 ]]; then
+    current_font_name
+    return 0
+  fi
 
-while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    -n|--name)
-      if [[ -n "$2" && ! "$2" =~ ^- ]]; then
-        load_font_manifest "$2"
-        set_font "$FONT_POSTSCRIPT_NAME" "$FONT_FILE" "$FONT_URL"
-        shift 2
-      else
-        echo "Error: Missing value for --name"
-        exit 1
-      fi
-      ;;
-    current)
-      current_font_name
-      exit 0
-      ;;
-    help)
-      font_help
-      exit 0
-      ;;
-    -*|--*)
-      echo "Unknown option: $1"
-      exit 1
-      ;;
-    *)
-      echo "Unknown argument: $1"
-      exit 1
-      ;;
-  esac
-done
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      -n|--name)
+        if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+          load_font_manifest "$2"
+          set_font "$FONT_POSTSCRIPT_NAME" "$FONT_FILE" "$FONT_URL"
+          shift 2
+        else
+          echo "Error: Missing value for --name"
+          return 1
+        fi
+        ;;
+      current)
+        current_font_name
+        return 0
+        ;;
+      help)
+        font_help
+        return 0
+        ;;
+      -*|--*)
+        echo "Unknown option: $1"
+        return 1
+        ;;
+      *)
+        echo "Unknown argument: $1"
+        return 1
+        ;;
+    esac
+  done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  font_main "$@"
+fi

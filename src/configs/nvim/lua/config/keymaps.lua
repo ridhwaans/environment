@@ -1,4 +1,3 @@
-local opt = vim.opt
 local map = vim.keymap.set
 local silent = { noremap = true, silent = true }
 
@@ -6,11 +5,11 @@ map("n", "<F2>", ToggleLineNumbers, silent)
 map("n", "<F3>", ToggleRelativeLineNumbers, silent)
 
 -- system clipboard
-map("n", "<leader>Y", '"+Y', opts)
-map("v", "<leader>y", '"+y', opts)
+map("n", "<leader>Y", '"+Y', silent)
+map("v", "<leader>y", '"+y', silent)
 
-map("n", "<leader>p", '"+p', opts)
-map("v", "<leader>p", '"+p', opts)
+map("n", "<leader>p", '"+p', silent)
+map("v", "<leader>p", '"+p', silent)
 
 -- jump half-page up/down with cursor in middle-of-page
 map("n", "<C-d>", "<C-d>zz", silent)
@@ -57,41 +56,41 @@ map("n", "bh", ":bprevious<CR>", silent)
 map("n", "bl", ":bnext<CR>", silent)
 map("n", "bc", ":bdelete<CR>", silent)
 
-Snacks = require("snacks")
+local snacks = require("snacks")
 map("n", "<leader>ff", function()
-	Snacks.picker.smart()
+	snacks.picker.smart()
 end, { desc = "Smart Find Files" })
 map("n", "<leader>fb", function()
-	Snacks.picker.buffers()
+	snacks.picker.buffers()
 end, { desc = "Buffers" })
 map("n", "<leader>fg", function()
-	Snacks.picker.grep()
+	snacks.picker.grep()
 end, { desc = "Grep" })
 map("n", "<leader>fe", function()
-	Snacks.explorer()
+	snacks.explorer()
 end, { desc = "File Explorer" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
-		local opts = { buffer = ev.buf, silent = true }
+		local lsp_opts = { buffer = ev.buf, silent = true }
 		map("n", "gR", function()
-			Snacks.picker.lsp_references()
-		end, { desc = "LSP references" })
+			snacks.picker.lsp_references()
+		end, vim.tbl_extend("force", lsp_opts, { desc = "LSP references" }))
 		map("n", "gd", function()
-			Snacks.picker.lsp_definitions()
-		end, { desc = "Goto definition" })
+			snacks.picker.lsp_definitions()
+		end, vim.tbl_extend("force", lsp_opts, { desc = "Goto definition" }))
 		map("n", "gy", function()
-			Snacks.picker.lsp_type_definitions()
-		end, { desc = "Goto T[y]pe definition" })
-		map("n", "gi", vim.lsp.buf.implementation, { desc = "Goto implementation" })
-		map("n", "<leader>m", vim.lsp.buf.rename, { desc = "Smart rename" })
-		map("n", "<leader>K", vim.lsp.buf.hover, { desc = "Show documentation" })
-		map("n", "<leader>D", vim.diagnostic.open_float, { desc = "Show [D]iagnoster error messages" })
+			snacks.picker.lsp_type_definitions()
+		end, vim.tbl_extend("force", lsp_opts, { desc = "Goto T[y]pe definition" }))
+		map("n", "gi", vim.lsp.buf.implementation, vim.tbl_extend("force", lsp_opts, { desc = "Goto implementation" }))
+		map("n", "<leader>m", vim.lsp.buf.rename, vim.tbl_extend("force", lsp_opts, { desc = "Smart rename" }))
+		map("n", "<leader>K", vim.lsp.buf.hover, vim.tbl_extend("force", lsp_opts, { desc = "Show documentation" }))
+		map("n", "<leader>D", vim.diagnostic.open_float, vim.tbl_extend("force", lsp_opts, { desc = "Show [D]iagnoster error messages" }))
 	end,
 })
 
-conform = require("conform")
+local conform = require("conform")
 map({ "n", "v" }, "<leader>fw", function()
 	conform.format({})
 end, { desc = "Format file or range (in visual mode)" })
