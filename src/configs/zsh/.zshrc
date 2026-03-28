@@ -182,6 +182,7 @@ setopt NO_CASE_GLOB # allows case-insensitive tab completion
 # ** History **
 # *************
 
+mkdir -p "$XDG_STATE_HOME/zsh"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
 export HISTSIZE=50000

@@ -6,9 +6,21 @@ dotenv_reset_system() {
 }
 
 dotenv_reset_appearance() {
-  load_font_manifest "$DEFAULT_FONT_NAME"
+  local preset_theme_name
+  local preset_font_name
+
+  load_preset_manifest "$DEFAULT_PRESET_NAME"
+  preset_theme_name="$THEME_NAME"
+  preset_font_name="$FONT_NAME"
+
+  if [ -z "$preset_theme_name" ] || [ -z "$preset_font_name" ]; then
+    echo "Error: Preset '$DEFAULT_PRESET_NAME' must define THEME_NAME and FONT_NAME." >&2
+    return 1
+  fi
+
+  load_font_manifest "$preset_font_name"
   set_font "$FONT_POSTSCRIPT_NAME" "$FONT_FILE" "$FONT_URL"
-  set_theme "$DEFAULT_THEME_NAME"
+  set_theme "$preset_theme_name"
 }
 
 dotenv_reset_all() {

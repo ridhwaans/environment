@@ -108,9 +108,23 @@ load_theme_manifest() {
   source "$manifest"
 }
 
+load_preset_manifest() {
+  local preset_name="$1"
+  local manifest
+
+  manifest=$(resolve_asset_manifest "presets" "$preset_name") || {
+    echo "Error: Unknown preset '$preset_name'." >&2
+    return 1
+  }
+
+  unset PRESET_NAME THEME_NAME FONT_NAME
+  source "$manifest"
+}
+
 export -f resolve_asset_root
 export -f resolve_asset_manifest
 export -f list_assets
 export -f sync_assets
 export -f load_font_manifest
 export -f load_theme_manifest
+export -f load_preset_manifest
