@@ -3,55 +3,44 @@
 set -e
 
 source "$ENVIRONMENT_DIR/src/assets.sh"
-
-conditional_sed() {
-    # use gnu sed for no explicit backup in-place editing on mac
-    if [ $(uname) = Darwin ]; then
-        gsed "$@"
-    else
-        sed "$@"
-    fi
-}
+source "$ENVIRONMENT_DIR/src/platform.sh"
 
 set_theme() {
-  theme=$1
+  local theme="$1"
   load_theme_manifest "$theme"
-  apply_theme
+  apply_theme "$theme"
 }
 
 apply_theme() {
-  echo "Applying theme: $theme"
+  local theme="$1"
+  local vscode_settings_file
+  local windows_terminal_settings_file
 
   # Windows Terminal
-  if [ $(uname) = Darwin ]; then
+  echo "Applying theme: $theme"
+
+  if [ "$(uname)" = "Darwin" ]; then
     echo "(mac)"
 
-  elif [ $(uname) = Linux ]; then
-    if [ -n "$WSL_DISTRO_NAME" ]; then
+  elif [ "$(uname)" = "Linux" ]; then
+    if [ -n "${WSL_DISTRO_NAME:-}" ]; then
       echo "(wsl)"
 
-      WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-      # Expand glob safely using array and quotes
-      shopt -s nullglob
-      WINDOWS_TERMINAL_SETTINGS_DIR=("$WINDOWS_HOME"/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState)
-
-      if [ ${#WINDOWS_TERMINAL_SETTINGS_DIR[@]} -eq 0 ]; then
-          echo "Settings directory not found"
-          exit 1
+      windows_terminal_settings_file=$(current_windows_terminal_settings_file) || windows_terminal_settings_file=""
+      if [ -z "$windows_terminal_settings_file" ]; then
+        echo "Settings directory not found"
+        return 1
       fi
-      # Pick first match
-      WINDOWS_TERMINAL_SETTINGS_DIR="${WINDOWS_TERMINAL_SETTINGS_DIR[0]}"
-      SETTINGS_FILE=$WINDOWS_TERMINAL_SETTINGS_DIR/settings.json
-      echo $SETTINGS_FILE
+      echo "$windows_terminal_settings_file"
 
       echo "$THEME_DIR/$WT_FILENAME"
       jq --slurpfile theme "$THEME_DIR/$WT_FILENAME" \
       '.schemes = [$theme[0]]' \
-      "$SETTINGS_FILE" \
-      > temp.json && mv temp.json $SETTINGS_FILE
+      "$windows_terminal_settings_file" \
+      > temp.json && mv temp.json "$windows_terminal_settings_file"
       echo "Updated Windows Terminal colorScheme to '$theme'."
 
-    elif [ -n "$CODESPACES" ]; then
+    elif [ -n "${CODESPACES:-}" ]; then
       echo "(github codespaces)"
 
     else
@@ -61,8 +50,8 @@ apply_theme() {
   fi
 
   # Terminal.app
-  if [ $(uname) = Darwin ]; then
-  echo "(mac)"
+  if [ "$(uname)" = "Darwin" ]; then
+    echo "(mac)"
 
 osascript <<EOD
 tell application "Terminal"
@@ -109,50 +98,30 @@ EOD
 
   # VS Code
 
-  if [ $(uname) = Darwin ]; then
-    echo "(mac)"
-
-    VSCODE_USER_SETTINGS_DIR=$HOME/Library/Application\ Support/Code/User
-
-  elif [ $(uname) = Linux ]; then
-    if [ -n "$WSL_DISTRO_NAME" ]; then
-      echo "(wsl)"
-
-      WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-      VSCODE_USER_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
-
-    elif [ -n "$CODESPACES" ]; then
-      echo "(github codespaces)"
-
-    else
-      echo "(native linux)"
-
-      VSCODE_USER_SETTINGS_DIR=$HOME/.config/Code/User
-    fi
-  fi
-
   if command -v code &>/dev/null; then
+    vscode_settings_file=$(current_vscode_settings_file) || vscode_settings_file=""
 
     code --install-extension $VSCODE_ICON_EXTENSION >/dev/null
-    conditional_sed -i "s/\"workbench.iconTheme\": \".*\"/\"workbench.iconTheme\": \"$VSCODE_ICON_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
-
     code --install-extension $VSCODE_COLOR_EXTENSION >/dev/null
-    conditional_sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$VSCODE_COLOR_THEME\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
+    if [ -n "$vscode_settings_file" ] && [ -f "$vscode_settings_file" ]; then
+      conditional_sed -i "s/\"workbench.iconTheme\": \".*\"/\"workbench.iconTheme\": \"$VSCODE_ICON_THEME\"/g" "$vscode_settings_file"
+      conditional_sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$VSCODE_COLOR_THEME\"/g" "$vscode_settings_file"
+    fi
   fi
 
   # Shell
 
-  conditional_sed -i "s/^THEME_NAME=.*/THEME_NAME=\"$theme\"/" $XDG_CONFIG_HOME/zsh/.zshrc
+  conditional_sed -i "s/^THEME_NAME=.*/THEME_NAME=\"$theme\"/" "$XDG_CONFIG_HOME/zsh/.zshrc"
 
   # Prompt
 
-  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME=\"$PROMPT_THEME\"/" $XDG_CONFIG_HOME/zsh/.zshrc
+  conditional_sed -i "s/^PROMPT_THEME=.*/PROMPT_THEME=\"$PROMPT_THEME\"/" "$XDG_CONFIG_HOME/zsh/.zshrc"
 
   # vim
 
-  conditional_sed -i "s|^let g:vim_plug_colorscheme = \".*\"|let g:vim_plug_colorscheme = \"$VIMPLUG_COLORSCHEME\"|" $XDG_CONFIG_HOME/vim/vimrc
+  conditional_sed -i "s|^let g:vim_plug_colorscheme = \".*\"|let g:vim_plug_colorscheme = \"$VIMPLUG_COLORSCHEME\"|" "$XDG_CONFIG_HOME/vim/vimrc"
 
-  conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" $XDG_CONFIG_HOME/vim/vimrc
+  conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" "$XDG_CONFIG_HOME/vim/vimrc"
 
   vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
 
@@ -166,4 +135,3 @@ EOD
 
 export -f set_theme
 export -f apply_theme
-export -f conditional_sed

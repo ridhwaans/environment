@@ -34,7 +34,7 @@ Usage: dotenv reset [system|appearance|all]
 
 Reset Targets:
   system               Recopy managed configs and rerun plugin/config sync
-  appearance           Reapply default font and theme
+  appearance           Reapply the default preset
   all                  Run both system and appearance reset
 EOF
 }

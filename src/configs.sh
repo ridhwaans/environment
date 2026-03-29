@@ -127,6 +127,7 @@ setup_mise_runtime() {
   local mise_bin
   local install_log
   local install_status
+  local script_cmd
 
   echo "(6/7) Setting up mise runtime..."
 
@@ -149,11 +150,22 @@ setup_mise_runtime() {
   install_log=$(mktemp)
 
   set +e
-  (
-    cd "$HOME" || exit 1
-    "$mise_bin" install
-  ) 2>&1 | tee "$install_log"
-  install_status=${PIPESTATUS[0]}
+  if [ -t 1 ] && command -v script >/dev/null 2>&1; then
+    script_cmd=$(printf 'cd %q || exit 1\n%q install\n' "$HOME" "$mise_bin")
+    if [ "$(uname)" = "Linux" ]; then
+      script -qefc "$script_cmd" "$install_log"
+      install_status=$?
+    else
+      script -q "$install_log" /bin/bash -lc "$script_cmd"
+      install_status=$?
+    fi
+  else
+    (
+      cd "$HOME" || exit 1
+      "$mise_bin" install
+    ) 2>&1 | tee "$install_log"
+    install_status=${PIPESTATUS[0]}
+  fi
   set -e
 
   if [ "$install_status" -ne 0 ]; then
@@ -176,14 +188,22 @@ sync_editor_plugins() {
   nvim --headless "+Lazy! sync" +qa
 }
 
-setup_configs() {
+setup_baseline_configs() {
+  setup_cli_links
+  setup_mise_runtime
+}
+
+setup_dotfiles() {
   setup_ide
   setup_terminal_emulator
   setup_home_files
   setup_source_directory
-  setup_cli_links
-  setup_mise_runtime
   sync_editor_plugins
+}
+
+setup_configs() {
+  setup_baseline_configs
+  setup_dotfiles
 
   echo "Done!"
 }

@@ -8,12 +8,14 @@ source "$ENVIRONMENT_DIR/src/runtime.sh"
 source "$ENVIRONMENT_DIR/src/defaults.sh"
 source "$ENVIRONMENT_DIR/src/assets.sh"
 source "$ENVIRONMENT_DIR/src/configs.sh"
+source "$ENVIRONMENT_DIR/src/platform.sh"
 source "$ENVIRONMENT_DIR/src/fonts/set-font.sh"
 source "$ENVIRONMENT_DIR/src/themes/set-theme.sh"
 source "$ENVIRONMENT_DIR/src/commands/version.sh"
 source "$ENVIRONMENT_DIR/src/commands/install.sh"
 source "$ENVIRONMENT_DIR/src/commands/update.sh"
 source "$ENVIRONMENT_DIR/src/commands/assets.sh"
+source "$ENVIRONMENT_DIR/src/commands/appearance.sh"
 source "$ENVIRONMENT_DIR/src/commands/reset.sh"
 
 show_help() {
@@ -21,7 +23,7 @@ show_help() {
 Usage: $(basename "$0") [COMMAND] [OPTIONS]
 
 Commands:
-  install              Install environment-managed dependencies and configs
+  install              Install baseline, dotfiles, or the full environment
   update               Get the newest changes for the environment repo
   reset                Reset system, appearance, or both
   assets               Manage external theme/font assets
@@ -56,13 +58,13 @@ case "$command" in
     dotenv_handle_assets "$@"
     ;;
   preset)
-    "$ENVIRONMENT_DIR/bin/preset.sh" "$@"
+    dotenv_handle_preset "$@"
     ;;
   font)
-    "$ENVIRONMENT_DIR/bin/font.sh" "$@"
+    dotenv_handle_font "$@"
     ;;
   theme)
-    "$ENVIRONMENT_DIR/bin/theme.sh" "$@"
+    dotenv_handle_theme "$@"
     ;;
   version)
     dotenv_version

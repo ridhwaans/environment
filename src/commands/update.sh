@@ -20,13 +20,13 @@ dotenv_update_clean_branch() {
 
 dotenv_update_check_unpulled_commits() {
   local branch="$1"
-  local status
+  local commit_count
 
   echo "Fetching the latest changes from the remote repository..."
   git -C "$ENVIRONMENT_DIR" fetch origin "$branch"
 
-  status=$(git -C "$ENVIRONMENT_DIR" status -uno | grep "Your branch is behind")
-  if [[ -n "$status" ]]; then
+  commit_count=$(git -C "$ENVIRONMENT_DIR" rev-list --count "HEAD..origin/$branch")
+  if [[ "$commit_count" -gt 0 ]]; then
     echo "There are unpulled commits. Pulling latest changes..."
     return 0
   fi

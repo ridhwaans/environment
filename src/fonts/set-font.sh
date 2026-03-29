@@ -2,43 +2,38 @@
 
 set -e
 
-conditional_sed() {
-    # use gnu sed for no explicit backup in-place editing on mac
-    if [ $(uname) = Darwin ]; then
-        gsed "$@"
-    else
-        sed "$@"
-    fi
-}
+source "$ENVIRONMENT_DIR/src/platform.sh"
 
 set_font() {
-  local postscript_name=$1
-	local file=$2
-  base_name="${file%.*}"
-	local url=$3
-  FONT_SIZE="11"
+  local postscript_name="$1"
+  local file="$2"
+  local url="$3"
+  local base_name="${file%.*}"
+  local font_size="11"
+  local vscode_settings_file
+  local settings_file
 
-  echo "postscript_name=$postscript_name, file=$file, base_name=$base_name, url=$url, FONT_SIZE=$FONT_SIZE"
+  echo "postscript_name=$postscript_name, file=$file, base_name=$base_name, url=$url, FONT_SIZE=$font_size"
 
   # Install
-	if ! $(fc-list | grep -i "$base_name" >/dev/null); then
-    if [ $(uname) = Darwin ]; then
+  if ! fc-list | grep -i "$base_name" >/dev/null; then
+    if [ "$(uname)" = "Darwin" ]; then
       echo "(mac)"
 
-      curl -L $url --create-dirs -o /Library/Fonts/"$file"
+      curl -L "$url" --create-dirs -o /Library/Fonts/"$file"
       fc-cache -f -v
-      fc-list | grep $file
+      fc-list | grep "$file"
 
-    elif [ $(uname) = Linux ]; then
-      if [ -n "$WSL_DISTRO_NAME" ]; then
+    elif [ "$(uname)" = "Linux" ]; then
+      if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         echo "(wsl)"
 
-        curl -L $url --create-dirs -o /usr/share/fonts/"$file"
+        curl -L "$url" --create-dirs -o /usr/share/fonts/"$file"
         fc-cache -f -v
-        fc-list | grep $file
+        fc-list | grep "$file"
 
-      elif [ -n "$CODESPACES" ]; then
-		    echo "(github codespaces)"
+      elif [ -n "${CODESPACES:-}" ]; then
+        echo "(github codespaces)"
 
       else
         echo "(native linux)"
@@ -49,62 +44,35 @@ set_font() {
 
   # VS Code
   if command -v code &>/dev/null; then
-    if [ $(uname) = Darwin ]; then
-        echo "(mac)"
-
-        VSCODE_USER_SETTINGS_DIR=$HOME/Library/Application\ Support/Code/User
-
-     elif [ $(uname) = Linux ]; then
-      if [ -n "$WSL_DISTRO_NAME" ]; then
-        echo "(wsl)"
-
-        WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-        VSCODE_USER_SETTINGS_DIR=$WINDOWS_HOME/AppData/Roaming/Code/User
-
-      elif [ -n "$CODESPACES" ]; then
-		    echo "(github codespaces)"
-
-      else
-        echo "(native linux)"
-
-        VSCODE_USER_SETTINGS_DIR=$HOME/.config/Code/User
-      fi
+    vscode_settings_file=$(current_vscode_settings_file) || vscode_settings_file=""
+    if [ -n "$vscode_settings_file" ] && [ -f "$vscode_settings_file" ]; then
+      echo "$vscode_settings_file"
+      conditional_sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$base_name\"/g" "$vscode_settings_file"
+      conditional_sed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$base_name\"/g" "$vscode_settings_file"
     fi
-
-    echo "$VSCODE_USER_SETTINGS_DIR"/settings.json
-    conditional_sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$base_name\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
-    conditional_sed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$base_name\"/g" "$VSCODE_USER_SETTINGS_DIR"/settings.json
   fi
 
   # Windows Terminal
-  if [ $(uname) = Linux ]; then
-    if [ -n "$WSL_DISTRO_NAME" ]; then
+  if [ "$(uname)" = "Linux" ]; then
+    if [ -n "${WSL_DISTRO_NAME:-}" ]; then
       echo "(wsl)"
 
-      WINDOWS_HOME=$(wslpath $(powershell.exe '$env:UserProfile') | sed -e 's/\r//g')
-      # Expand glob safely using array and quotes
-      shopt -s nullglob
-      WINDOWS_TERMINAL_SETTINGS_DIR=("$WINDOWS_HOME"/AppData/Local/Packages/Microsoft.WindowsTerminal*/LocalState)
-
-      if [ ${#WINDOWS_TERMINAL_SETTINGS_DIR[@]} -eq 0 ]; then
-          echo "Settings directory not found"
-          exit 1
+      settings_file=$(current_windows_terminal_settings_file) || settings_file=""
+      if [ -z "$settings_file" ]; then
+        echo "Settings directory not found"
+        return 1
       fi
-      # Pick first match
-      WINDOWS_TERMINAL_SETTINGS_DIR="${WINDOWS_TERMINAL_SETTINGS_DIR[0]}"
-      SETTINGS_FILE=$WINDOWS_TERMINAL_SETTINGS_DIR/settings.json
-      echo $SETTINGS_FILE
+      echo "$settings_file"
 
-      # Run jq safely
       jq --arg base_name "$base_name" '.profiles.list |= map(if .source == "Windows.Terminal.Wsl" then .font.face = $base_name else . end)' \
-      $SETTINGS_FILE \
-      > temp.json && mv temp.json $SETTINGS_FILE
-      echo "Updated Windows Terminal font to '$base_name' size $FONT_SIZE."
+      "$settings_file" \
+      > temp.json && mv temp.json "$settings_file"
+      echo "Updated Windows Terminal font to '$base_name' size $font_size."
     fi
   fi
 
   # Terminal.app
-  if [ $(uname) = Darwin ]; then
+  if [ "$(uname)" = "Darwin" ]; then
     echo "(mac)"
 
 osascript <<EOD
@@ -114,7 +82,7 @@ tell application "Terminal"
 
     -- Change the font name and size of the default profile
     set font name of defaultProfile to "$postscript_name"
-    set font size of defaultProfile to $FONT_SIZE
+    set font size of defaultProfile to $font_size
 end tell
 EOD
   fi

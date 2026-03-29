@@ -5,6 +5,15 @@ run_brew_command_as_target_user() {
     eval "$(/opt/homebrew/bin/brew shellenv)" && sudo -u $USERNAME brew "$@"
 }
 
+conditional_sed() {
+    # use gnu sed for no explicit backup in-place editing on mac
+    if [ "$(uname)" = "Darwin" ]; then
+        gsed "$@"
+    else
+        sed "$@"
+    fi
+}
+
 conditional_grep() {
     # use gnu grep for pcre on mac
     if [ "$ADJUSTED_ID" = "mac" ]; then
@@ -52,5 +61,6 @@ find_version_from_git_tags() {
 }
 
 export -f run_brew_command_as_target_user
+export -f conditional_sed
 export -f conditional_grep
 export -f find_version_from_git_tags
