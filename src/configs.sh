@@ -182,6 +182,12 @@ setup_mise_runtime() {
       return 0
     fi
 
+    if grep -Eqi "operation timed out|timed out|timeout" "$install_log"; then
+      echo "mise install hit a network timeout; skipping runtime install for this run."
+      rm -f "$install_log"
+      return 0
+    fi
+
     rm -f "$install_log"
     return "$install_status"
   fi

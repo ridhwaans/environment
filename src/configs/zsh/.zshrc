@@ -11,7 +11,11 @@ export ENVIRONMENT_DIR="$HOME/Source/environment"
 eval "$(mise activate zsh)"
 export PATH="$XDG_DATA_HOME/mise/shims:$PATH"
 
-eval "$(starship init zsh)"
+USE_STARSHIP="${USE_STARSHIP:-0}"
+
+if [ "$USE_STARSHIP" = "1" ]; then
+  eval "$(starship init zsh)"
+fi
 
 # ***********
 # ** zplug **
@@ -182,9 +186,17 @@ fi
 
 PROMPT_THEME=agnoster
 
-PROMPT_THEME_FILE="$ENVIRONMENT_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
+if [ -s "$ENVIRONMENT_ASSETS_DIR/themes/$THEME_NAME/$PROMPT_THEME.zsh-theme" ]; then
+  PROMPT_THEME_FILE="$ENVIRONMENT_ASSETS_DIR/themes/$THEME_NAME/$PROMPT_THEME.zsh-theme"
+elif [ -s "$ENVIRONMENT_LOCAL_ASSETS_DIR/themes/$THEME_NAME/$PROMPT_THEME.zsh-theme" ]; then
+  PROMPT_THEME_FILE="$ENVIRONMENT_LOCAL_ASSETS_DIR/themes/$THEME_NAME/$PROMPT_THEME.zsh-theme"
+else
+  PROMPT_THEME_FILE=""
+fi
 
-[[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
+if [ "$USE_STARSHIP" != "1" ]; then
+  [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
+fi
 
 setopt PROMPT_SUBST # enable command substitution in prompt (for shell prompt theme)
 setopt NO_CASE_GLOB # allows case-insensitive tab completion
