@@ -123,6 +123,17 @@ setup_cli_links() {
   ln -sf "$ENVIRONMENT_DIR/bin/dotenv" "$XDG_BIN_HOME/dotenv"
 }
 
+setup_mise_config() {
+  local mise_config_dir
+
+  mise_config_dir="$CONFIGS_DIR/mise"
+  if [ ! -d "$mise_config_dir" ]; then
+    return 0
+  fi
+
+  copy_path "$mise_config_dir" "$XDG_CONFIG_HOME/mise"
+}
+
 setup_mise_runtime() {
   local mise_bin
   local install_log
@@ -141,10 +152,6 @@ setup_mise_runtime() {
 
   if [ -f "$XDG_CONFIG_HOME/mise/config.toml" ]; then
     "$mise_bin" trust "$XDG_CONFIG_HOME/mise/config.toml"
-  fi
-
-  if [ -f "$ENVIRONMENT_DIR/src/configs/mise/config.toml" ]; then
-    "$mise_bin" trust "$ENVIRONMENT_DIR/src/configs/mise/config.toml"
   fi
 
   install_log=$(mktemp)
@@ -190,6 +197,7 @@ sync_editor_plugins() {
 
 setup_baseline_configs() {
   setup_cli_links
+  setup_mise_config
   setup_mise_runtime
 }
 
