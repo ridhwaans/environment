@@ -8,14 +8,39 @@ export PATH="$XDG_BIN_HOME:$PATH"
 
 export ENVIRONMENT_DIR="$HOME/Source/environment"
 
+dotenv_should_reload_shell() {
+  local dotenv_command="$1"
+  shift
+
+  case "$dotenv_command" in
+    preset|theme|font) ;;
+    *)
+      return 1
+      ;;
+  esac
+
+  if [[ "$#" -ge 2 && ( "$1" = "-n" || "$1" = "--name" ) ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+dotenv() {
+  "$ENVIRONMENT_DIR/bin/dotenv" "$@"
+  local dotenv_status=$?
+
+  if [[ $dotenv_status -eq 0 ]] && dotenv_should_reload_shell "$@"; then
+    exec zsh -l
+  fi
+
+  return $dotenv_status
+}
+
 eval "$(mise activate zsh)"
 export PATH="$XDG_DATA_HOME/mise/shims:$PATH"
 
 USE_STARSHIP="${USE_STARSHIP:-0}"
-
-if [ "$USE_STARSHIP" = "1" ]; then
-  eval "$(starship init zsh)"
-fi
 
 # ***********
 # ** zplug **
@@ -196,6 +221,21 @@ fi
 
 if [ "$USE_STARSHIP" != "1" ]; then
   [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
+fi
+
+if [ -s "$ENVIRONMENT_ASSETS_DIR/themes/$THEME_NAME/starship.toml" ]; then
+  STARSHIP_CONFIG_FILE="$ENVIRONMENT_ASSETS_DIR/themes/$THEME_NAME/starship.toml"
+elif [ -s "$ENVIRONMENT_LOCAL_ASSETS_DIR/themes/$THEME_NAME/starship.toml" ]; then
+  STARSHIP_CONFIG_FILE="$ENVIRONMENT_LOCAL_ASSETS_DIR/themes/$THEME_NAME/starship.toml"
+elif [ -s "$XDG_CONFIG_HOME/starship.toml" ]; then
+  STARSHIP_CONFIG_FILE="$XDG_CONFIG_HOME/starship.toml"
+else
+  STARSHIP_CONFIG_FILE=""
+fi
+
+if [ "$USE_STARSHIP" = "1" ]; then
+  [[ -n "$STARSHIP_CONFIG_FILE" ]] && export STARSHIP_CONFIG="$STARSHIP_CONFIG_FILE"
+  eval "$(starship init zsh)"
 fi
 
 setopt PROMPT_SUBST # enable command substitution in prompt (for shell prompt theme)

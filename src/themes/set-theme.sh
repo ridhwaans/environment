@@ -13,8 +13,29 @@ set_theme() {
 
 apply_theme() {
   local theme="$1"
+  local fallback_manifest
+  local fallback_theme_name=""
+  local fallback_theme_path=""
   local vscode_settings_file
   local windows_terminal_settings_file
+
+  fallback_manifest=$(resolve_asset_manifest "themes" "gotham") || fallback_manifest=""
+  if [ -n "$fallback_manifest" ]; then
+    fallback_theme_name="$(
+      unset THEME_NAME PROMPT_THEME VIMPLUG_COLORSCHEME VIM_COLORSCHEME NVIM_COLORSCHEME \
+        VSCODE_ICON_EXTENSION VSCODE_ICON_THEME VSCODE_COLOR_EXTENSION VSCODE_COLOR_THEME \
+        WT_FILENAME TERM_FILENAME NVIM_FILENAME THEME_DIR
+      source "$fallback_manifest"
+      printf '%s' "$THEME_NAME"
+    )"
+    fallback_theme_path="$(
+      unset THEME_NAME PROMPT_THEME VIMPLUG_COLORSCHEME VIM_COLORSCHEME NVIM_COLORSCHEME \
+        VSCODE_ICON_EXTENSION VSCODE_ICON_THEME VSCODE_COLOR_EXTENSION VSCODE_COLOR_THEME \
+        WT_FILENAME TERM_FILENAME NVIM_FILENAME THEME_DIR
+      source "$fallback_manifest"
+      printf '%s/%s' "$THEME_DIR" "$TERM_FILENAME"
+    )"
+  fi
 
   # Windows Terminal
   echo "Applying theme: $theme"
@@ -57,24 +78,31 @@ osascript <<EOD
 tell application "Terminal"
     local allOpenedWindows
     local initialOpenedWindows
+    local fallbackThemeName
+    local fallbackThemePath
+    local resolvedThemeName
     local windowID
     set themeName to "$theme"
-    set themeFilePath to "$THEME_DIR/$TERM_FILENAME"
+    set fallbackThemeName to "$fallback_theme_name"
+    set fallbackThemePath to "$fallback_theme_path"
+    if themeName is fallbackThemeName then
+        set resolvedThemeName to themeName
+    else
+        set resolvedThemeName to fallbackThemeName
+    end if
 
     (* Store the IDs of all the open terminal windows *)
     set initialOpenedWindows to id of every window
 
-    (* Check if the theme already exists in the list of Terminal settings *)
-    if not (exists settings set themeName) then
-        (* Open the custom theme so that it gets added to the list of available terminal themes *)
-        do shell script "open '" & themeFilePath & "'"
-
-        (* Wait a little bit to ensure that the custom theme is added *)
-        delay 1
+    if not (exists settings set resolvedThemeName) then
+        if fallbackThemePath is not "" then
+            do shell script "open '" & fallbackThemePath & "'"
+            delay 1
+        end if
     end if
 
     (* Set the custom theme as the default terminal theme *)
-    set default settings to settings set themeName
+    set default settings to settings set resolvedThemeName
 
     (* Get the IDs of all the currently opened terminal windows *)
     set allOpenedWindows to id of every window
@@ -88,7 +116,7 @@ tell application "Terminal"
             (* Change the theme for the initial opened terminal windows
                to remove the need to close them in order for the custom
                theme to be applied *)
-            set current settings of tabs of (every window whose id is windowID) to settings set themeName
+            set current settings of tabs of (every window whose id is windowID) to settings set resolvedThemeName
         end if
     end repeat
 end tell
@@ -123,7 +151,7 @@ EOD
 
   conditional_sed -i "s|^let g:colorscheme = \".*\"|let g:colorscheme = \"$VIM_COLORSCHEME\"|" "$XDG_CONFIG_HOME/vim/vimrc"
 
-  vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
+  vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean! +qall
 
   # nvim
 
