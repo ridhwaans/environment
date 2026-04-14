@@ -6,14 +6,6 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 
 export PATH="$XDG_BIN_HOME:$PATH"
 
-export ENVIRONMENT_DIR="$HOME/Source/environment"
-ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
-
-mise install
-eval "$(mise activate zsh)"
-
-eval "$(starship init zsh)"
-
 # ***********
 # ** zplug **
 # ***********
@@ -83,6 +75,12 @@ fi
 export LANG=en_US.UTF-8
 export EDITOR="code"
 export FZF_DEFAULT_OPTS="--layout=reverse"
+
+eval "$(mise activate zsh)"
+eval "$(starship init zsh)"
+
+export ENVIRONMENT_DIR="$HOME/Source/environment"
+ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 
 # https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
 alias vim="vim -u $XDG_CONFIG_HOME/vim/vimrc"
@@ -180,4 +178,3 @@ export SAVEHIST=10000
 
 setopt APPEND_HISTORY INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_REDUCE_BLANKS
 fc -R
-
