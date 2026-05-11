@@ -22,6 +22,8 @@ if ! zplug check --verbose; then
 fi
 
 zplug load --verbose
+autoload -Uz compinit
+compinit
 
 # **********************
 # ** Helper functions **
