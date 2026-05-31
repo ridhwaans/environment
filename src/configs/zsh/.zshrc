@@ -86,7 +86,7 @@ ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 # ** Shell theme **
 # *****************
 
-THEME_NAME="gotham"
+THEME_NAME="sekiguchi"
 
 THEME_FILE="$APPEARANCE_DIR/src/themes/$THEME_NAME/theme.sh"
 
@@ -96,13 +96,7 @@ THEME_FILE="$APPEARANCE_DIR/src/themes/$THEME_NAME/theme.sh"
 # ** Prompt theme **
 # ******************
 
-PROMPT_THEME="agnoster"
-
-PROMPT_THEME_FILE="$APPEARANCE_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
-
-if [ "$PROMPT_THEME" = "starship" ]; then
-  export STARSHIP_CONFIG="$APPEARANCE_DIR/src/themes/$THEME_NAME/starship.toml"
-fi
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 
 eval "$(mise activate zsh)"
 eval "$(starship init zsh)"
@@ -168,8 +162,6 @@ fi
 
 if [ -n "$CODESPACES" ]; then
 fi
-
-[[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
 
 setopt PROMPT_SUBST # enable command substitution in prompt (for shell prompt theme)
 setopt NO_CASE_GLOB # allows case-insensitive tab completion
