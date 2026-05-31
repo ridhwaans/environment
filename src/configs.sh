@@ -32,7 +32,6 @@ if command -v code &>/dev/null; then
     while IFS= read -r extension || [ -n "$extension" ]; do
         code --install-extension "$extension"
     done < "$CONFIGS_DIR/code/extensions/extensions"
-    code --install-extension PKief.material-icon-theme
 fi
 
 if [ $(uname) = Darwin ]; then

@@ -18,14 +18,16 @@ set laststatus=2    " display status line
 
 " vim-plug
 let g:vim_plug_home = expand('$XDG_DATA_HOME/vim')
-let g:vim_plug_colorscheme = "whatyouhide/vim-gotham"
-let g:colorscheme = "gotham"
+let g:vim_plug_colorscheme = ""
+let g:colorscheme = ""
 
 execute 'source ' . g:vim_plug_home . '/autoload/plug.vim'
 
 call plug#begin(g:vim_plug_home . '/plugged')
 
-Plug g:vim_plug_colorscheme
+if !empty(g:vim_plug_colorscheme)
+  execute 'Plug ' . string(g:vim_plug_colorscheme)
+endif
 Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'machakann/vim-highlightedyank'

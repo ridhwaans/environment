@@ -1,17 +1,12 @@
 // See https://code.visualstudio.com/docs/getstarted/settings#_default-settings for more
 
 {
-	// Appearance
 	"window.newWindowDimensions": "maximized",
 	"editor.parameterHints.enabled":false,
 	"extensions.ignoreRecommendations":true,
-	"workbench.iconTheme": "material-icon-theme",
-	"workbench.colorTheme": "Gotham",
-	"editor.fontFamily": "'Roboto Mono for Powerline', Menlo, Monaco, 'Courier New', monospace",
 	"editor.detectIndentation": true,
 	"editor.tabSize": 2,
 	"editor.insertSpaces": true,
-	"terminal.integrated.fontFamily": "'Roboto Mono for Powerline'",
 	// Core
 	"terminal.integrated.defaultProfile.windows": "Ubuntu (WSL)",
 	"terminal.integrated.defaultProfile.linux": "zsh",

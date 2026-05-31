@@ -78,11 +78,34 @@ export LANG=en_US.UTF-8
 export EDITOR="code"
 export FZF_DEFAULT_OPTS="--layout=reverse"
 
+export ENVIRONMENT_DIR="$HOME/Source/environment"
+export APPEARANCE_DIR="$HOME/Source/appearance"
+ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
+
+# *****************
+# ** Shell theme **
+# *****************
+
+THEME_NAME="gotham"
+
+THEME_FILE="$APPEARANCE_DIR/src/themes/$THEME_NAME/theme.sh"
+
+[[ -s $THEME_FILE ]] && source $THEME_FILE
+
+# ******************
+# ** Prompt theme **
+# ******************
+
+PROMPT_THEME="agnoster"
+
+PROMPT_THEME_FILE="$APPEARANCE_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
+
+if [ "$PROMPT_THEME" = "starship" ]; then
+  export STARSHIP_CONFIG="$APPEARANCE_DIR/src/themes/$THEME_NAME/starship.toml"
+fi
+
 eval "$(mise activate zsh)"
 eval "$(starship init zsh)"
-
-export ENVIRONMENT_DIR="$HOME/Source/environment"
-ln -sf $ENVIRONMENT_DIR/bin/dotenv "$XDG_BIN_HOME/dotenv"
 
 # https://vi.stackexchange.com/questions/37639/viminit-conflicts-for-neovim-and-vim
 alias vim="vim -u $XDG_CONFIG_HOME/vim/vimrc"
@@ -145,24 +168,6 @@ fi
 
 if [ -n "$CODESPACES" ]; then
 fi
-
-# *****************
-# ** Shell theme **
-# *****************
-
-THEME_NAME="gotham"
-
-THEME_FILE="$ENVIRONMENT_DIR/src/themes/$THEME_NAME/theme.sh"
-
-[[ -s $THEME_FILE ]] && source $THEME_FILE
-
-# ******************
-# ** Prompt theme **
-# ******************
-
-PROMPT_THEME="agnoster"
-
-PROMPT_THEME_FILE="$ENVIRONMENT_DIR/src/themes/$PROMPT_THEME/$PROMPT_THEME.zsh-theme"
 
 [[ -s $PROMPT_THEME_FILE ]] && source $PROMPT_THEME_FILE
 

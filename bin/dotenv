@@ -1,7 +1,6 @@
 #!/bin/bash
 
-source $ENVIRONMENT_DIR/src/fonts/set-font.sh
-source $ENVIRONMENT_DIR/src/themes/set-theme.sh
+APPEARANCE_DIR=${APPEARANCE_DIR:-$HOME/Source/appearance}
 
 function show_help() {
   cat <<EOF
@@ -11,6 +10,7 @@ Commands:
   update               Get the newest changes if there are any
   font                 Font management (use 'font help' for details)
   theme                Theme management (use 'theme help' for details)
+  preset               Preset management (use 'preset help' for details)
   help                 Show this help message
 EOF
 }
@@ -29,11 +29,8 @@ case "$command" in
   update)
     $ENVIRONMENT_DIR/bin/update.sh
     ;;
-  font)
-    $ENVIRONMENT_DIR/bin/font.sh "$@"
-    ;;
-  theme)
-    $ENVIRONMENT_DIR/bin/theme.sh "$@"
+  font|theme|preset)
+    $APPEARANCE_DIR/bin/appearance "$command" "$@"
     ;;
   help)
     show_help
