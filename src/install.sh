@@ -16,7 +16,7 @@ export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export APPEARANCE_DIR=${APPEARANCE_DIR:-$HOME/Source/appearance}
 
-for script in "$SCRIPT_ROOT/install/common-utils.sh" "$SCRIPT_ROOT/configs.sh" "$APPEARANCE_DIR/src/configs.sh"; do
+for script in "$SCRIPT_ROOT/install/common-utils.sh" "$SCRIPT_ROOT/configs.sh" "$SCRIPT_ROOT/install/appearance.sh"; do
   echo "Running $(basename "$script")..."
   bash "$script"
 done

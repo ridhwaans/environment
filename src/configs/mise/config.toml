@@ -8,6 +8,7 @@ go = "latest"
 java = { version = "latest", vendor = "openjdk" }
 python = "latest"
 ruby = "latest"
+rust = "latest"
 
 gh = "latest"
 pipx = "latest"
