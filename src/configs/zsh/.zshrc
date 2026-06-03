@@ -6,6 +6,10 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 
 export PATH="$XDG_BIN_HOME:$PATH"
 
+if [ $(uname) = Darwin ]; then
+  eval $(/opt/homebrew/bin/brew shellenv)
+fi
+
 # ***********
 # ** zplug **
 # ***********
@@ -140,8 +144,6 @@ if [ $(uname) = Darwin ]; then
   launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist
 
   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/mysql/lib
-
-  eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
 if [ -n "$WSL_DISTRO_NAME" ]; then

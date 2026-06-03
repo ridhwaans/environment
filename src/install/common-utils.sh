@@ -66,7 +66,7 @@ if [  "$NVIM_VERSION" != "stable" ] && [  "$NVIM_VERSION" != "nightly" ]; then
     ADJUSTED_NVIM_VERSION="v$NVIM_VERSION"
 fi
 curl -sL https://github.com/neovim/neovim/archive/refs/tags/${ADJUSTED_NVIM_VERSION}.tar.gz | tar -xzC /tmp 2>&1
-make -C /tmp/neovim-${ADJUSTED_NVIM_VERSION} && sudo make -C /tmp/neovim-${ADJUSTED_NVIM_VERSION} install
+make -C /tmp/neovim-${ADJUSTED_NVIM_VERSION} CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$(dirname "$XDG_BIN_HOME")" && make -C /tmp/neovim-${ADJUSTED_NVIM_VERSION} install
 sudo rm -rf /tmp/neovim-${ADJUSTED_NVIM_VERSION}
 
 echo "Installing zplug..."

@@ -110,12 +110,16 @@ nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :Rg<CR>
 nnoremap <leader>fb :Buffers<CR>
 
-try
-  execute 'colorscheme ' . g:colorscheme
-catch /^Vim\%((\a\+)\)\=:E185/
-  colorscheme default
-  set background=dark
-endtry
+if !empty(g:colorscheme)
+  try
+    execute 'colorscheme ' . g:colorscheme
+  catch /^Vim\%((\a\+)\)\=:E185/
+    colorscheme default
+    set background=dark
+  endtry
+endif
 
 " vim-airline status bar theme
-let g:airline_theme = g:colorscheme
+if !empty(g:colorscheme)
+  let g:airline_theme = g:colorscheme
+endif

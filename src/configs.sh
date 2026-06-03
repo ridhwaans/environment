@@ -114,9 +114,10 @@ export PATH=$XDG_BIN_HOME:$PATH
 mise settings ruby.compile=false
 mise install
 
-# Moving to end because it lapses trailing code
-vim -u "$XDG_CONFIG_HOME/vim/vimrc" +silent! +PlugInstall +PlugClean +qall
+echo "Installing Vim plugins..."
+vim --not-a-term -u "$XDG_CONFIG_HOME/vim/vimrc" -n "+PlugInstall --sync" "+PlugClean!" +qall
 
+echo "Installing Neovim plugins..."
 nvim --headless "+Lazy! sync" +qa
 
 echo "Done!"
