@@ -88,7 +88,7 @@ for entry in "$CONFIGS_DIR"/*; do
 
     # skip
     case "$name" in
-        code|windowsterminal) continue ;;
+        appearance|code|windowsterminal) continue ;;
     esac
 
     dest="$XDG_CONFIG_HOME/$name"
@@ -112,6 +112,9 @@ mkdir -p "$HOME/Source" && curl -sfSL "https://gist.githubusercontent.com/ridhwa
 
 export PATH=$XDG_BIN_HOME:$PATH
 mise settings ruby.compile=false
+if [ -f "$XDG_CONFIG_HOME/mise/config.toml" ]; then
+    mise trust -q "$XDG_CONFIG_HOME/mise/config.toml"
+fi
 mise install
 
 echo "Installing Vim plugins..."

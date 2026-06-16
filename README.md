@@ -7,6 +7,11 @@ git clone -b main https://github.com/ridhwaans/environment.git $HOME/Source/envi
 bash $HOME/Source/environment/install.sh
 ```
 
+skip appearance defaults
+```bash
+bash $HOME/Source/environment/install.sh --no-appearance-defaults
+```
+
 wget
 ```bash
 wget -qO- https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/boot.sh | bash
@@ -24,7 +29,7 @@ docker run -w /root -it --rm debian bash -c '
   apt install -y --no-install-recommends ca-certificates curl git sudo zsh &&
   curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/user.sh | bash &&
   TARGET_USERNAME=$(grep "^TARGET_USERNAME=" /tmp/.environment | cut -d"=" -f2-) &&
-  sudo -u "$TARGET_USERNAME" bash -c "curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/boot.sh -o /tmp/boot.sh && bash /tmp/boot.sh && rm -f /tmp/boot.sh" &&
+  sudo -u "$TARGET_USERNAME" env INSTALL_APPEARANCE_DEFAULTS=false bash -c "curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/boot.sh -o /tmp/boot.sh && bash /tmp/boot.sh --no-appearance-defaults && rm -f /tmp/boot.sh" &&
   exec sudo -u "$TARGET_USERNAME" env \
   HOME="/home/$TARGET_USERNAME" \
   ZDOTDIR="/home/$TARGET_USERNAME/.config/zsh" \

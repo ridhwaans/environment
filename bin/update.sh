@@ -1,48 +1,39 @@
 #!/bin/bash
 
-clean_branch() {
-    if [[ -n $(git -C "$ENVIRONMENT_DIR" status --porcelain) ]]; then
-        echo "The main branch is dirty. Cleaning up..."
-        git -C "$ENVIRONMENT_DIR" reset --hard  # Clean the working directory
-    else
-        echo "The main branch is clean."
-    fi
-}
-
-check_unpulled_commits() {
-    echo "Fetching the latest changes from the remote repository..."
-    git -C "$ENVIRONMENT_DIR" fetch origin main  # Get up-to-date remote state
-
-    local status=$(git -C "$ENVIRONMENT_DIR" status -uno | grep "Your branch is behind")
-    if [[ -n "$status" ]]; then
-        echo "There are unpulled commits. Pulling latest changes..."
-        return 0
-    else
-        echo "No unpulled commits."
-        return 1
-    fi
-}
+set -e
 
 update_repo() {
-    if [[ ! -d "$ENVIRONMENT_DIR" ]]; then
-        echo "The specified repository path does not exist."
-        exit 1
+    local repo_dir=$1
+    local repo_name=$2
+
+    if [[ ! -d "$repo_dir/.git" ]]; then
+        echo "$repo_name repository not found: $repo_dir"
+        return
     fi
 
-    current_branch=$(git -C "$ENVIRONMENT_DIR" branch --show-current)
+    if [[ -n $(git -C "$repo_dir" status --porcelain) ]]; then
+        echo "$repo_name has local changes. Skipping update."
+        return
+    fi
+
+    current_branch=$(git -C "$repo_dir" branch --show-current)
     if [[ "$current_branch" != "main" ]]; then
-        echo "Switching to the main branch..."
-        git -C "$ENVIRONMENT_DIR" checkout main
+        echo "$repo_name is on $current_branch. Skipping update."
+        return
     fi
 
-    clean_branch
+    echo "Fetching $repo_name..."
+    git -C "$repo_dir" fetch origin main
 
-    check_unpulled_commits
-    if [[ $? -eq 0 ]]; then
-        git -C "$ENVIRONMENT_DIR" pull origin main
+    local status=$(git -C "$repo_dir" status -uno | grep "Your branch is behind" || true)
+    if [[ -n "$status" ]]; then
+        echo "Updating $repo_name..."
+        git -C "$repo_dir" pull origin main
+    else
+        echo "$repo_name is up to date."
     fi
-
-    echo "Repository is up to date!"
 }
 
-update_repo
+update_repo "$ENVIRONMENT_DIR" "environment"
+update_repo "$DOTFILES_DIR" "dotfiles"
+update_repo "$APPEARANCE_DIR" "appearance"

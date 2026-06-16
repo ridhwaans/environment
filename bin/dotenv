@@ -1,13 +1,17 @@
 #!/bin/bash
 
+ENVIRONMENT_DIR=${ENVIRONMENT_DIR:-$HOME/Source/environment}
+DOTFILES_DIR=${DOTFILES_DIR:-$HOME/Source/dotfiles}
 APPEARANCE_DIR=${APPEARANCE_DIR:-$HOME/Source/appearance}
+export ENVIRONMENT_DIR DOTFILES_DIR APPEARANCE_DIR
 
 function show_help() {
   cat <<EOF
 Usage: $(basename "$0") [COMMAND] [OPTIONS]
 
 Commands:
-  update               Get the newest changes if there are any
+  update               Get the newest changes for environment, dotfiles, and appearance
+  defaults             Install defaults from dotfiles
   font                 Font management (use 'font help' for details)
   theme                Theme management (use 'theme help' for details)
   preset               Preset management (use 'preset help' for details)
@@ -28,6 +32,9 @@ shift
 case "$command" in
   update)
     $ENVIRONMENT_DIR/bin/update.sh
+    ;;
+  defaults)
+    INSTALL_APPEARANCE_DEFAULTS=${INSTALL_APPEARANCE_DEFAULTS:-true} bash "$ENVIRONMENT_DIR/src/install/defaults.sh" "$@"
     ;;
   font|theme|preset)
     $APPEARANCE_DIR/bin/appearance "$command" "$@"

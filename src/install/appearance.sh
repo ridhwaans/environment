@@ -20,5 +20,3 @@ if [ ! -x "$APPEARANCE_DIR/bin/appearance" ]; then
     echo "Appearance executable not found: $APPEARANCE_DIR/bin/appearance"
     exit 1
 fi
-
-"$APPEARANCE_DIR/install.sh"
