@@ -93,4 +93,6 @@ echo "TARGET_USERNAME=$USERNAME" >> /tmp/.environment
 echo "TARGET_UID=$USER_UID" >> /tmp/.environment
 echo "TARGET_GID=$USER_GID" >> /tmp/.environment
 
+chown "$USERNAME" /tmp/.environment
+
 cat /tmp/.environment
