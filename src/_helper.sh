@@ -14,6 +14,15 @@ conditional_grep() {
     fi
 }
 
+conditional_sed() {
+    # use gnu sed for no explicit backup in-place editing on mac
+    if [ "$ADJUSTED_ID" = "mac" ]; then
+        gsed "$@"
+    else
+        sed "$@"
+    fi
+}
+
 # Figure out correct version of a three part version number is not passed
 # Requires Bash. Zsh does not support indirect variable reference and extended pattern substitution syntax (//).
 find_version_from_git_tags() {
@@ -53,4 +62,5 @@ find_version_from_git_tags() {
 
 export -f run_brew_command_as_target_user
 export -f conditional_grep
+export -f conditional_sed
 export -f find_version_from_git_tags

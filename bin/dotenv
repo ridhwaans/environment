@@ -10,11 +10,12 @@ function show_help() {
 Usage: $(basename "$0") [COMMAND] [OPTIONS]
 
 Commands:
-  update               Get the newest changes for environment, dotfiles, and appearance
-  defaults             Install defaults from dotfiles
+  reset                Reset environment, dotfiles, and appearance to origin/main
+  defaults             Install defaults from dotfiles (use 'defaults help' for details)
   font                 Font management (use 'font help' for details)
   theme                Theme management (use 'theme help' for details)
   preset               Preset management (use 'preset help' for details)
+  card                 Theme system card (use 'card help' for details)
   help                 Show this help message
 EOF
 }
@@ -30,13 +31,13 @@ command="$1"
 shift
 
 case "$command" in
-  update)
-    $ENVIRONMENT_DIR/bin/update.sh
+  reset)
+    $ENVIRONMENT_DIR/bin/reset.sh "$@"
     ;;
   defaults)
     INSTALL_APPEARANCE_DEFAULTS=${INSTALL_APPEARANCE_DEFAULTS:-true} bash "$ENVIRONMENT_DIR/src/install/defaults.sh" "$@"
     ;;
-  font|theme|preset)
+  font|theme|preset|card)
     $APPEARANCE_DIR/bin/appearance "$command" "$@"
     ;;
   help)

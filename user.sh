@@ -2,6 +2,8 @@
 
 set -e
 
+ENVIRONMENT_START_SECONDS=${ENVIRONMENT_START_SECONDS:-$(date +%s)}
+
 if [ "$(id -u)" -ne 0 ]; then
   echo -e 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
   exit 1
@@ -84,7 +86,8 @@ fi
 echo "confirming username, uid, gid, shell"
 cat /etc/passwd
 
-echo "elapsed=$elapsed" > /tmp/.environment
+echo "ENVIRONMENT_START_SECONDS=$ENVIRONMENT_START_SECONDS" > /tmp/.environment
+echo "elapsed=0" >> /tmp/.environment
 echo "ADJUSTED_ID=$ADJUSTED_ID" >> /tmp/.environment
 echo "TARGET_USERNAME=$USERNAME" >> /tmp/.environment
 echo "TARGET_UID=$USER_UID" >> /tmp/.environment

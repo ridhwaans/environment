@@ -2,10 +2,26 @@
 
 set -e
 
-APPEARANCE_PROFILE=$DOTFILES_DIR/appearance/profile.env
+defaults_help() {
+  cat <<EOF
+Usage: dotenv defaults [OPTIONS]
+
+Defaults:
+  Apply defaults from dotfiles/appearance/profile.env.
+
+Options:
+  --appearance-defaults       Apply appearance defaults
+  --no-appearance-defaults    Skip appearance defaults
+  help                        Show this help message
+EOF
+}
 
 for arg in "$@"; do
   case "$arg" in
+    help)
+      defaults_help
+      exit 0
+      ;;
     --appearance-defaults)
       export INSTALL_APPEARANCE_DEFAULTS=true
       ;;
@@ -29,11 +45,5 @@ case "$INSTALL_APPEARANCE_DEFAULTS" in
         exit 0
         ;;
 esac
-
-if [ -f "$APPEARANCE_PROFILE" ]; then
-    set -a
-    source "$APPEARANCE_PROFILE"
-    set +a
-fi
 
 "$APPEARANCE_DIR/install.sh"
