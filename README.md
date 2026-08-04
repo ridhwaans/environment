@@ -1,28 +1,34 @@
 # environment
- https://github.com/ridhwaans/environment/tree/main
+
+[https://github.com/ridhwaans/environment/tree/main](https://github.com/ridhwaans/environment/tree/main)
 
 git
+
 ```bash
 git clone -b main https://github.com/ridhwaans/environment.git $HOME/Source/environment
 bash $HOME/Source/environment/install.sh
 ```
 
 skip appearance defaults
+
 ```bash
 bash $HOME/Source/environment/install.sh --no-appearance-defaults
 ```
 
 wget
+
 ```bash
 wget -qO- https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/boot.sh | bash
 ```
 
 curl
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ridhwaans/environment/refs/heads/main/boot.sh | bash
 ```
 
 docker
+
 ```bash
 docker run -w /root -it --rm debian bash -c '
   export ENVIRONMENT_START_SECONDS=$(date +%s) &&
@@ -37,3 +43,9 @@ docker run -w /root -it --rm debian bash -c '
   bash -c "cd \$HOME && exec zsh -l"
 '
 ```
+
+#### downstream
+
+[https://github.com/ridhwaans/dotfiles/tree/main](https://github.com/ridhwaans/dotfiles/tree/main)
+[https://github.com/ridhwaans/appearance/tree/main](https://github.com/ridhwaans/appearance/tree/main)
+
